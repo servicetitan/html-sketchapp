@@ -2,15 +2,9 @@
 
 HTML to Sketch export solution.
 
-<div align="center">
-  <img alt="html-sketchapp" src="https://i.imgur.com/xQ1lqlV.png" height="100" />
-</div>
-
 ## What it can do?
 
 html-sketchapp turns HTML nodes into Sketch layers or symbols. Additionally, it allows to export shared text styles and document colors.
-
-<img src="https://i.imgur.com/yPjMwFU.png" width="100%" />
 
 ## Why?
 
@@ -22,21 +16,15 @@ The motivation behind this project was ability to easily share Front-End style g
 
 We were unable to quickly work around these limitations, so we created html-sketchapp.
 
-You can learn more about this project from:
-- [our wiki](https://github.com/brainly/html-sketchapp/wiki),
-- and the excellent article ["Sketching in the Browser"](https://medium.com/seek-blog/sketching-in-the-browser-33a7b7aa0526) by @markdalgleish.
-
 ## Limitations
 
 Comprehensive summary of what is, and what is not supported can be found [here](https://github.com/brainly/html-sketchapp/wiki/What's-supported%3F), but the TLDR is as follows:
 
-- pseudoelements are not supported,
+- pseudoelements are not supported (workaround used),
+- resizing information aka constraints is not generated (workaround used),
 - some CSS properties (e.g. overflow) are not supported or not fully supported,
 - not all types of images are supported (animated gifs, webp),
-- resizing information is not generated,
 - all fonts have to be locally installed.
-
-The good news is that all of those are fixable and that we welcome pull requests ❤️
 
 ## How do I run it?
 
@@ -44,8 +32,21 @@ The good news is that all of those are fixable and that we welcome pull requests
 
 You can get stable version of html-sketchapp from NPM.
 
-```sh
+```
 npm i @brainly/html-sketchapp
+```
+
+### Build html-sketchapp
+
+```
+npm i # install dependencies
+npm run build # build the plugin
+```
+
+On Windows additional settings may be required (see [this thread](https://github.com/nodejs/node-gyp/issues/679):
+
+```
+npm install --global windows-build-tools
 ```
 
 ### Create .asketch files
@@ -61,23 +62,5 @@ There is no one right way of using `html2asketch`, but you can start by checking
 
 ### Import .asketch files to Sketch
 
-All `.asketch.json` files should be loaded to Sketch via the `asketch2sketch.sketchplugin` plugin.
+All `.asketch.json` files should be loaded to Sketch via the `./build/asketch2sketch.sketchplugin` plugin. You can download ready to use Sketch plugin from the ["Releases"](https://github.com/brainly/html-sketchapp/releases/latest) section.
 
-<img src="https://i.imgur.com/9eDm6NQ.png" width="450" alt="Installing Sketch plugin" title="Installing Sketch plugin" />
-
-You can download ready to use Sketch plugin from the ["Releases"](https://github.com/brainly/html-sketchapp/releases/latest) section, or build it yourself from the sources:
-
-```
-npm i # install dependencies
-npm run build # build the plugin
-```
-
-## Projects using html-sketchapp
-
-- [html-sketchapp-cli](https://github.com/seek-oss/html-sketchapp-cli) - "Quickly generate Sketch libraries from HTML documents and living style guides."
-- [story2sketch](https://github.com/chrisvxd/story2sketch) - "Convert Storybook stories into Sketch symbols."
-- [UIengine](https://github.com/dennisreimann/uiengine) - "Workbench for UI-driven development."
-
-## Standing on the shoulders of giants :heart:
-
-This project uses huge bits and pieces from the fantastic [react-sketchapp](https://github.com/airbnb/react-sketchapp) and wouldn't be possible without [skpm](https://github.com/skpm/skpm) and information from [Sketch-Headers](https://github.com/abynim/Sketch-Headers).
