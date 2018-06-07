@@ -10,6 +10,7 @@ class Base {
     this._objectID = generateID();
     this._name = '';
     this._userInfo = null;
+    this._rotation = 0;
     this.setResizingConstraint(RESIZING_CONSTRAINTS.NONE);
   }
 
@@ -75,7 +76,7 @@ class Base {
       'nameIsFixed': false,
       'resizingConstraint': this._resizingConstraint,
       'resizingType': 0,
-      'rotation': 0,
+      'rotation': this._rotation,
       'shouldBreakMaskChain': false,
       layers: this._layers.map(layer => layer.toJSON())
     };
