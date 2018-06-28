@@ -17,6 +17,14 @@ class SymbolMaster extends Base {
     this._symbolID = id;
   }
 
+  setObjectId(id) {
+    this._objectID = id;
+  }
+
+  setChangeIdentifier(versionNumber) {
+    this._changeIdentifier = versionNumber;
+  }
+
   getSymbolInstance({x, y, width, height}) {
     return new SymbolInstance({x, y, width, height, symbolID: this._symbolID});
   }
@@ -92,7 +100,7 @@ class SymbolMaster extends Base {
     obj.resizesContent = false;
     obj.includeBackgroundColorInInstance = false;
     obj.symbolID = this._symbolID;
-    obj.changeIdentifier = 0;
+    obj.changeIdentifier = this._changeIdentifier || 0;
 
     return obj;
   }

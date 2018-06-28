@@ -164,9 +164,13 @@ export default function asketch2sketch(context) {
       .forEach(layer => layer && page.addLayer(layer));
 
     if (failingLayers.length === 1) {
-      UI.alert('asketch2sketch', 'One layer couldn\'t be imported and was skipped.');
+      UI.alert('asketch2sketch', `One layer couldn't be imported and was skipped. 
+        layer.name: ${failingLayers[0].name} 
+        layer.do_objectID: ${failingLayers[0].do_objectID} 
+        layer.toString(): ${failingLayers[0].toString()}`);
     } else if (failingLayers.length > 1) {
-      UI.alert('asketch2sketch', `${failingLayers.length} layers couldn't be imported and were skipped.`);
+      UI.alert('asketch2sketch', `${failingLayers.length} layers couldn't be imported and were skipped. 
+        Failing layers: ${failingLayers.toString().substring(0, 300)}`);
     } else {
       const emojis = ['👌', '👍', '✨', '😍', '🍾', '🤩', '🎉', '👏', '💪', '🤘', '💅', '🏆', '🚀'];
 

@@ -46,7 +46,7 @@ export default function nodeTreeToSketchGroup(node, options) {
   if (options && options.getGroupName) {
     group.setName(options.getGroupName(node));
   } else {
-    group.setName(`(${node.nodeName.toLowerCase()})`);
+    group.setName(`${node.nodeName.toLowerCase()}`);
   }
 
   // Handling 'data-sketchapp-...' attributes

@@ -9,6 +9,10 @@ class Page extends Base {
     this._height = height;
   }
 
+  setId(id) {
+    this._objectID = id;
+  }
+
   toJSON() {
     const obj = super.toJSON();
 
