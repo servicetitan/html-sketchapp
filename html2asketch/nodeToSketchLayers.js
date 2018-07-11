@@ -119,7 +119,7 @@ export default function nodeToSketchLayers(node, options) {
   } else {
     shapeGroup.setName(createXPathFromElement(node));
     // Replacing xpath with regular name for symbols
-    if (options.isSymbol) {
+    if (options && options.isSymbol) {
       shapeGroup.setName('shapeGroup');
     }
   }
