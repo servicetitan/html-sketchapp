@@ -1,5 +1,6 @@
 export {default as nodeToSketchLayers} from './nodeToSketchLayers';
 export {default as nodeTreeToSketchGroup} from './nodeTreeToSketchGroup';
+export {default as nodeTreeToSketchLayers} from './nodeTreeToSketchLayers';
 export {default as nodeTreeToSketchPage} from './nodeTreeToSketchPage';
 
 export {default as Document} from './model/document';

@@ -16,6 +16,11 @@ export function isNodeVisible(node, {width, height} = node.getBoundingClientRect
   display,
   clip
 } = getComputedStyle(node)) {
+  // skip if node has non-zero padding
+  if (node.getAttribute('data-sketch-padding')) {
+    return true;
+  }
+
   // skip node when display is set to none for itself or an ancestor
   // helps us catch things such as <noscript>
   if (node.tagName !== 'BODY' && node.offsetParent === null && position !== 'fixed') {

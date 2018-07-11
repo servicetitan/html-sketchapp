@@ -118,6 +118,10 @@ export default function nodeToSketchLayers(node, options) {
     shapeGroup.setName(options.getRectangleName(node));
   } else {
     shapeGroup.setName(createXPathFromElement(node));
+    // Replacing xpath with regular name for symbols
+    if (options.isSymbol) {
+      shapeGroup.setName('shapeGroup');
+    }
   }
 
   const isImage = node.nodeName === 'IMG' && node.currentSrc;

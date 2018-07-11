@@ -1,27 +1,85 @@
-export function handleSymbolAttributes(node, group) {
+export function handleSymbolAttributes(node, element) {
 
   const constraints = node.getAttribute('data-sketch-constraints') || false;
   const rotation = node.getAttribute('data-sketch-rotation') || false; /* Measured in deg */
   const padding = node.getAttribute('data-sketch-padding') || false;
   const spacing = node.getAttribute('data-sketch-spacing') || false;
 
-  if (constraints) {
-    group._resizingConstraint = constraints;
+  const isGroup = element._class === 'group';
+  // Automatic padding with Paddy require set of layers, not group
+  const isLayers = element && Array.isArray(element);
+
+  if (constraints && isGroup) {
+    element._resizingConstraint = constraints;
   }
 
-  if (rotation) {
-    group._rotation = -parseInt(rotation, 10);
+  if (rotation && isGroup) {
+    // Sketch stores negative value of rotatioin angle!
+    element._rotation = -parseInt(rotation, 10);
   }
 
   if (padding) {
-    /* Utilizing Paddy plugin for Sketch */
-    //group.name += `[padding]`;
+    // Utilising Paddy plugin for Sketch
+    // Padding may be applied only to fill layers
+    const paddyPadding = padding === 'auto' ? getNodePadding(node) : padding; // Calculate padding if needed
+
+    // Looking for shapeGroup layer
+    if (isLayers) {
+      for (const key in element) {
+        if (element[key]._name === 'shapeGroup') {
+          element[key]._name = `bg ${paddyPadding}`;
+          break; // Set name to only one layer
+        }
+      }
+    } else {
+      console.log('Paddy not works well within groups!');
+    }
   }
 
-  if (spacing) {
-    //group.name += `[padding]`;
+  if (spacing && isGroup) {
+    // Paddy plugin for Sketch
+    // Automated spacing between elements inside group
+
+    /*
+    Examples:
+    [left] – align all layers left
+    [10v c] – space all layers vertically with a spacing of 10, all centered horizontally
+    [5h b] – space all layers horizontally with a spacing of 5, all aligned at the bottom
+    */
+    element._name += ` ${spacing}`;
   }
 
-  return group;
+  /*
+  node.removeAttribute('data-sketch-constraints')
+      .removeAttribute('data-sketch-rotation')
+      .removeAttribute('data-sketch-padding')
+      .removeAttribute('data-sketch-spacing');
+  */
+
+  return element;
 }
 
+export function getNodePadding(node) {
+  const padding = getComputedStyle(node).padding;
+  const paddyPadding = `[${padding.replace(/px/g, '')}]`;
+
+  return paddyPadding;
+}
+
+export function closestShapeGroup(element) {
+  const shapeGroupClass = 'shapeGroup';
+  const isArray = element && Array.isArray(element);
+
+  if (isArray) {
+    element.forEach(layer => closestShapeGroup(layer));
+  } else {
+    if (element._class === shapeGroupClass) {
+      return element;
+    }
+    if (element._layers) {
+      for (const sublayer of element._layers) {
+        return closestShapeGroup(sublayer);
+      }
+    }
+  }
+}
