@@ -4,6 +4,7 @@ export function handleSymbolAttributes(node, element) {
   const rotation = node.getAttribute('data-sketch-rotation') || false; /* Measured in deg */
   const padding = node.getAttribute('data-sketch-padding') || false;
   const spacing = node.getAttribute('data-sketch-spacing') || false;
+  const textLabel = node.getAttribute('data-sketch-textlabel') || false;
 
   const isGroup = element._class === 'group';
   // Automatic padding with Paddy require set of layers, not group
@@ -32,7 +33,8 @@ export function handleSymbolAttributes(node, element) {
         }
       }
     } else {
-      console.log('Paddy not works well within groups!');
+      console.log('Paddy not works well with grouped layers. Here is the group: ');
+      console.log(element);
     }
   }
 
@@ -49,12 +51,15 @@ export function handleSymbolAttributes(node, element) {
     element._name += ` ${spacing}`;
   }
 
-  /*
-  node.removeAttribute('data-sketch-constraints')
-      .removeAttribute('data-sketch-rotation')
-      .removeAttribute('data-sketch-padding')
-      .removeAttribute('data-sketch-spacing');
-  */
+  if (textLabel && typeof textLabel === 'string') {
+    if (isLayers) {
+      renameTextLayerInArray(element, textLabel);
+    }
+    if (isGroup) {
+      renameTextLayerInGroup(element, textLabel);
+    }
+
+  }
 
   return element;
 }
@@ -66,20 +71,21 @@ export function getNodePadding(node) {
   return paddyPadding;
 }
 
-export function closestShapeGroup(element) {
-  const shapeGroupClass = 'shapeGroup';
-  const isArray = element && Array.isArray(element);
-
-  if (isArray) {
-    element.forEach(layer => closestShapeGroup(layer));
-  } else {
-    if (element._class === shapeGroupClass) {
-      return element;
-    }
-    if (element._layers) {
-      for (const sublayer of element._layers) {
-        return closestShapeGroup(sublayer);
-      }
+export function renameTextLayerInArray(el, name) {
+  for (const key in el) {
+    if (el[key]._class === 'text') {
+      el[key]._name = name;
+      return true; // Rename only one layer
     }
   }
+  return false;
+}
+
+export function renameTextLayerInGroup(el, name) {
+  if (el._class === 'text') {
+    el._name = name;
+    return true; // Rename only one layer in group
+  }
+  el._layers.forEach(layer => renameTextLayerInGroup(layer, name));
+  return false;
 }
