@@ -58,7 +58,6 @@ export function handleSymbolAttributes(node, element) {
     if (isGroup) {
       renameTextLayerInGroup(element, textLabel);
     }
-
   }
 
   return element;
@@ -75,6 +74,7 @@ export function renameTextLayerInArray(el, name) {
   for (const key in el) {
     if (el[key]._class === 'text') {
       el[key]._name = name;
+      el[key]._isLabeledText = true;
       return true; // Rename only one layer
     }
   }
@@ -84,6 +84,7 @@ export function renameTextLayerInArray(el, name) {
 export function renameTextLayerInGroup(el, name) {
   if (el._class === 'text') {
     el._name = name;
+    el._isLabeledText = true;
     return true; // Rename only one layer in group
   }
   el._layers.forEach(layer => renameTextLayerInGroup(layer, name));
