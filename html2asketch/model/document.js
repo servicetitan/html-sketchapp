@@ -11,7 +11,7 @@ function pageToPageReference(page) {
 function textStyleToSharedStyle(textLayer) {
   return {
     '_class': 'sharedStyle',
-    'do_objectID': generateID(),
+    'do_objectID': (textLayer._objectID ? textLayer._objectID : generateID()),
     name: textLayer._name,
     'style': textLayer._style.toJSON()
   };
@@ -23,6 +23,10 @@ class Document {
     this._colors = [];
     this._textStyles = [];
     this._pages = [];
+  }
+
+  setId(id) {
+    this._objectID = id;
   }
 
   setName(name) {

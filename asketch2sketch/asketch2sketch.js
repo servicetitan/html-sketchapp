@@ -4,6 +4,7 @@ import {fixTextLayer, fixSharedTextStyle} from './helpers/fixFont';
 import fixImageFill from './helpers/fixImageFill';
 import fixSVGLayer from './helpers/fixSVG';
 import zoomToFit from './helpers/zoomToFit';
+import collapseAllGroups from './helpers/collapseAllGroups';
 
 function removeExistingLayers(context) {
   if (context.containsLayers()) {
@@ -178,5 +179,6 @@ export default function asketch2sketch(context) {
     }
 
     zoomToFit(context);
+    collapseAllGroups(context);
   }
 }

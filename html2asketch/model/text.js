@@ -15,6 +15,10 @@ class Text extends Base {
     this._multiline = multiline;
   }
 
+  setId(id) {
+    this._objectID = id;
+  }
+
   toJSON() {
     const obj = super.toJSON();
 
