@@ -20,30 +20,48 @@ export function handleSymbolAttributes(node, element) {
   }
 
   if (padding) {
-    // Utilising Paddy plugin for Sketch
-    // Padding may be applied only to fill layers
-    const paddyPadding = padding === 'auto' ? getNodePadding(node) : padding; // Calculate padding if needed
+    /*
+    Utilising Paddy plugin for Sketch
+    Padding may be applied only to fill layers, e.g.:
+    [10 12] – is equal to padding: 10px 12px;
+    */
+    const paddyPadding = padding === 'auto' ? getPaddyPadding(node) : padding; // Calculate padding if 'auto'
 
     // Looking for shapeGroup layer
     if (isLayers) {
-      for (const key in element) {
-        if (element[key]._name === 'shapeGroup') {
-          element[key]._name = `bg ${paddyPadding}`;
-          break; // Set name to only one layer
+      element.forEach(layer => {
+        let counter = 0;
+
+        if (layer._class === 'shapeGroup') {
+          counter++;
+          if (counter === 1) { // Set padding on one layer only
+            layer._name = `bg ${paddyPadding}`;
+          }
         }
-      }
-    } else {
+
+        if (layer._class === 'text') {
+          layer._isPaddyText = true;
+          if (layer._heightByLines) {
+            // Rounding upward prevents line wrapping
+            layer._width = Math.ceil(layer._width);
+            // Setting minimal height of text element
+            if (layer._height > layer._heightByLines) {
+              layer._height = layer._heightByLines;
+            }
+          }
+        }
+      });
+    }
+    if (isGroup) {
       console.log('Paddy not works well with grouped layers. Here is the group: ');
       console.log(element);
     }
   }
 
   if (spacing && isGroup) {
-    // Paddy plugin for Sketch
-    // Automated spacing between elements inside group
-
     /*
-    Examples:
+    Paddy plugin for Sketch
+    Automated spacing between elements inside group, e.g.:
     [left] – align all layers left
     [10v c] – space all layers vertically with a spacing of 10, all centered horizontally
     [5h b] – space all layers horizontally with a spacing of 5, all aligned at the bottom
@@ -63,14 +81,7 @@ export function handleSymbolAttributes(node, element) {
   return element;
 }
 
-export function getNodePadding(node) {
-  const padding = getComputedStyle(node).padding;
-  const paddyPadding = `[${padding.replace(/px/g, '')}]`;
-
-  return paddyPadding;
-}
-
-export function renameTextLayerInArray(el, name) {
+function renameTextLayerInArray(el, name) {
   for (const key in el) {
     if (el[key]._class === 'text') {
       el[key]._name = name;
@@ -81,7 +92,7 @@ export function renameTextLayerInArray(el, name) {
   return false;
 }
 
-export function renameTextLayerInGroup(el, name) {
+function renameTextLayerInGroup(el, name) {
   if (el._class === 'text') {
     el._name = name;
     el._isLabeledText = true;
@@ -89,4 +100,11 @@ export function renameTextLayerInGroup(el, name) {
   }
   el._layers.forEach(layer => renameTextLayerInGroup(layer, name));
   return false;
+}
+
+function getPaddyPadding(node) {
+  const padding = getComputedStyle(node).padding;
+  const paddyPaddingSuffix = `[${padding.replace(/px/g, '')}]`;
+
+  return paddyPaddingSuffix;
 }

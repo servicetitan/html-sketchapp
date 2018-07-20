@@ -259,12 +259,13 @@ export default function nodeToSketchLayers(node, options) {
       const textBCR = rangeHelper.getBoundingClientRect();
       const lineHeightInt = parseInt(lineHeight, 10);
       const textBCRHeight = textBCR.bottom - textBCR.top;
+      const textHeightByLines = numberOfLines * lineHeightInt;
       let fixY = 0;
 
       // center text inside a box
       // TODO it's possible now in sketch - fix it!
-      if (lineHeightInt && textBCRHeight !== lineHeightInt * numberOfLines) {
-        fixY = (textBCRHeight - lineHeightInt * numberOfLines) / 2;
+      if (lineHeightInt && textBCRHeight !== textHeightByLines) {
+        fixY = (textBCRHeight - textHeightByLines) / 2;
       }
 
       const textValue = fixWhiteSpace(textNode.nodeValue, whiteSpace);
@@ -278,6 +279,8 @@ export default function nodeToSketchLayers(node, options) {
         style: textStyle,
         multiline: numberOfLines > 1
       });
+
+      text._heightByLines = textHeightByLines;
 
       layers.push(text);
     });
