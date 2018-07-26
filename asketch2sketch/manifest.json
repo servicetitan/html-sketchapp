@@ -3,7 +3,7 @@
   "bundleVersion": 1,
   "commands": [
     {
-      "name": "From *Almost* Sketch to Sketch",
+      "name": "Servicetitan's Asketch (json) to Sketch",
       "identifier": "asketch2sketch",
       "script": "./asketch2sketch.js"
     }

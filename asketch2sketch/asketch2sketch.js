@@ -64,15 +64,28 @@ function removeSharedTextStyles(document) {
 }
 
 function addSharedTextStyle(document, style) {
-  const container = context.document.documentData().layerTextStyles();
+  const textStyles = context.document.documentData().layerTextStyles();
 
-  if (container.addSharedStyleWithName_firstInstance) {
-    container.addSharedStyleWithName_firstInstance(style.name, fromSJSONDictionary(style.value));
+  if (textStyles.addSharedStyleWithName_firstInstance) {
+    textStyles.addSharedStyleWithName_firstInstance(style.name, fromSJSONDictionary(style.value));
   } else {
     // addSharedStyleWithName_firstInstance was removed in Sketch 50
-    const s = MSSharedStyle.alloc().initWithName_firstInstance(style.name, fromSJSONDictionary(style.value));
+    const sharedStyle = MSSharedStyle.alloc().initWithName_firstInstance(style.name, fromSJSONDictionary(style.value));
 
-    container.addSharedObject(s);
+    if (style.value.sharedObjectID) {
+      sharedStyle.objectID = style.value.sharedObjectID;
+    }
+
+    textStyles.addSharedObject(sharedStyle);
+
+    const sharedStyles = textStyles.sharedStyles();
+
+    for (let i = 0; i < sharedStyles.length; ++i) {
+      if (String(sharedStyles[i].objectID()) === style.value.sharedObjectID) {
+        sharedStyles[i].value().sharedObjectID = style.value.sharedObjectID;
+        console.log('sharedObjectID: ' + sharedStyles[i].value().sharedObjectID());
+      }
+    }
   }
 }
 
@@ -137,10 +150,15 @@ export default function asketch2sketch(context) {
     removeSharedColors(document);
     removeSharedTextStyles(document);
 
+    let alertMsg = '';
+
     if (asketchDocument.assets.colors) {
       asketchDocument.assets.colors.forEach(color => addSharedColor(document, color));
 
-      console.log('Shared colors added: ' + asketchDocument.assets.colors.length);
+      const colorsMsg = 'Shared colors added: ' + asketchDocument.assets.colors.length;
+
+      console.log(colorsMsg);
+      alertMsg += colorsMsg + '\n';
     }
 
     if (asketchDocument.layerTextStyles && asketchDocument.layerTextStyles.objects) {
@@ -149,7 +167,13 @@ export default function asketch2sketch(context) {
         addSharedTextStyle(document, style);
       });
 
-      console.log('Shared text styles added: ' + asketchDocument.layerTextStyles.objects.length);
+      const textStylesMsg = 'Shared text styles added: ' + asketchDocument.layerTextStyles.objects.length;
+
+      console.log(textStylesMsg);
+      alertMsg += textStylesMsg + '\n';
+    }
+    if (alertMsg) {
+      UI.alert('asketch2sketch', alertMsg);
     }
   }
 

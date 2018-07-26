@@ -62,7 +62,7 @@ function createStringAttributes(textStyles) {
 
   const attribs = {
     MSAttributedStringFontAttribute: font.fontDescriptor(),
-    NSFont: font,
+    //NSFont: font,
     NSParagraphStyle: makeParagraphStyle(textStyles),
     NSUnderline: TEXT_DECORATION_UNDERLINE[textStyles.textDecoration] || 0,
     NSStrikethrough: TEXT_DECORATION_LINETHROUGH[textStyles.textDecoration] || 0
@@ -127,7 +127,7 @@ function makeTextStyle(textStyle) {
     _class: 'textStyle',
     encodedAttributes: {
       MSAttributedStringFontAttribute: encodeSketchJSON(font.fontDescriptor()),
-      NSFont: font,
+      //NSFont: font,
       NSColor: encodeSketchJSON(
         NSColor.colorWithDeviceRed_green_blue_alpha(
           color.red,
@@ -162,5 +162,8 @@ export function fixTextLayer(layer) {
 
 export function fixSharedTextStyle(sharedStyle) {
   sharedStyle.value = makeTextStyle(sharedStyle.style);
+  if (sharedStyle.do_objectID) {
+    sharedStyle.value.sharedObjectID = sharedStyle.do_objectID;
+  }
   delete sharedStyle.style;
 }
