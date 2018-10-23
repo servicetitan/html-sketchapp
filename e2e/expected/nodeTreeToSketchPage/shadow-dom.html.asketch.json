@@ -57,7 +57,7 @@
           "isLocked": false,
           "isVisible": true,
           "layerListExpandedType": 0,
-          "name": "(body)",
+          "name": "body",
           "nameIsFixed": false,
           "resizingConstraint": 63,
           "resizingType": 0,
@@ -79,7 +79,7 @@
               "isLocked": false,
               "isVisible": true,
               "layerListExpandedType": 0,
-              "name": "(h2)",
+              "name": "h2",
               "nameIsFixed": false,
               "resizingConstraint": 63,
               "resizingType": 0,
@@ -176,7 +176,7 @@
               "isLocked": false,
               "isVisible": true,
               "layerListExpandedType": 0,
-              "name": "(test-el)",
+              "name": "test-el",
               "nameIsFixed": false,
               "resizingConstraint": 63,
               "resizingType": 0,
@@ -220,8 +220,8 @@
                     "constrainProportions": false,
                     "height": 17,
                     "width": 106,
-                    "x": 149.3125,
-                    "y": 69.4375
+                    "x": 150.3125,
+                    "y": 70.4375
                   },
                   "text": "Slotted content",
                   "automaticallyDrawOnUnderlyingPath": false,
@@ -250,7 +250,7 @@
               "frame": {
                 "_class": "rect",
                 "constrainProportions": false,
-                "height": 98.4375,
+                "height": 100.4375,
                 "width": 784,
                 "x": 0,
                 "y": 48.4375
@@ -273,7 +273,7 @@
               "isLocked": false,
               "isVisible": true,
               "layerListExpandedType": 0,
-              "name": "(h1)",
+              "name": "h1",
               "nameIsFixed": false,
               "resizingConstraint": 63,
               "resizingType": 0,
@@ -370,7 +370,7 @@
               "isLocked": false,
               "isVisible": true,
               "layerListExpandedType": 0,
-              "name": "(button)",
+              "name": "button",
               "nameIsFixed": false,
               "resizingConstraint": 63,
               "resizingType": 0,
@@ -426,8 +426,8 @@
                       "frame": {
                         "_class": "rect",
                         "constrainProportions": false,
-                        "height": 40,
-                        "width": 267,
+                        "height": 42,
+                        "width": 269,
                         "x": 0,
                         "y": 0
                       },
@@ -512,14 +512,14 @@
                         "isEnabled": true,
                         "color": {
                           "_class": "color",
-                          "red": 0.8470588235294118,
-                          "green": 0.8470588235294118,
-                          "blue": 0.8470588235294118,
+                          "red": 0.8666666666666667,
+                          "green": 0.8666666666666667,
+                          "blue": 0.8666666666666667,
                           "alpha": 1
                         },
                         "fillType": 0,
                         "position": 1,
-                        "thickness": 1
+                        "thickness": 2
                       }
                     ],
                     "shadows": [],
@@ -536,8 +536,8 @@
                   "frame": {
                     "_class": "rect",
                     "constrainProportions": false,
-                    "height": 40,
-                    "width": 267,
+                    "height": 42,
+                    "width": 269,
                     "x": 0,
                     "y": 0
                   },
@@ -581,8 +581,8 @@
                     "constrainProportions": false,
                     "height": 17,
                     "width": 138,
-                    "x": 11,
-                    "y": 11
+                    "x": 12,
+                    "y": 12
                   },
                   "text": "Shadow content ->",
                   "automaticallyDrawOnUnderlyingPath": false,
@@ -605,7 +605,7 @@
                   "isLocked": false,
                   "isVisible": true,
                   "layerListExpandedType": 0,
-                  "name": "(slot)",
+                  "name": "slot",
                   "nameIsFixed": false,
                   "resizingConstraint": 63,
                   "resizingType": 0,
@@ -661,8 +661,8 @@
               "frame": {
                 "_class": "rect",
                 "constrainProportions": false,
-                "height": 40,
-                "width": 267,
+                "height": 42,
+                "width": 269,
                 "x": 0,
                 "y": 106.875
               },
@@ -690,7 +690,7 @@
           "frame": {
             "_class": "rect",
             "constrainProportions": false,
-            "height": 146.875,
+            "height": 148.875,
             "width": 784,
             "x": 8,
             "y": 19.90625
@@ -704,7 +704,7 @@
       "frame": {
         "_class": "rect",
         "constrainProportions": false,
-        "height": 146.875,
+        "height": 148.875,
         "width": 784,
         "x": 0,
         "y": 0
@@ -734,7 +734,7 @@
   "frame": {
     "_class": "rect",
     "constrainProportions": false,
-    "height": 146.875,
+    "height": 148.875,
     "width": 784,
     "x": 0,
     "y": 0

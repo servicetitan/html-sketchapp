@@ -57,8 +57,8 @@
         "constrainProportions": false,
         "height": 17,
         "width": 106,
-        "x": 157.3125,
-        "y": 137.78125
+        "x": 158.3125,
+        "y": 138.78125
       },
       "text": "Slotted content",
       "automaticallyDrawOnUnderlyingPath": false,
@@ -118,7 +118,7 @@
   "frame": {
     "_class": "rect",
     "constrainProportions": false,
-    "height": 147,
+    "height": 149,
     "width": 784,
     "x": 0,
     "y": 0
