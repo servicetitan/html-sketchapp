@@ -1,7 +1,8 @@
 import UI from 'sketch/ui';
 import {fromSJSONDictionary} from 'sketchapp-json-plugin';
 import {fixTextLayer, fixSharedTextStyle} from './helpers/fixFont';
-import fixImageFill from './helpers/fixImageFill';
+import fixImageFillsInLayer from './helpers/fixImageFill';
+import fixBitmap from './helpers/fixBitmap';
 import fixSVGLayer from './helpers/fixSVG';
 import zoomToFit from './helpers/zoomToFit';
 import collapseAllGroups from './helpers/collapseAllGroups';
@@ -21,12 +22,17 @@ function removeExistingLayers(context) {
 }
 
 function getNativeLayer(failingLayers, layer) {
+  // debug
+  // console.log('Processing ' + layer.name + ' (' + layer._class + ')');
+
   if (layer._class === 'text') {
     fixTextLayer(layer);
   } else if (layer._class === 'svg') {
     fixSVGLayer(layer);
+  } else if (layer._class === 'bitmap') {
+    fixBitmap(layer);
   } else {
-    fixImageFill(layer);
+    fixImageFillsInLayer(layer);
   }
 
   // Create native object for the current layer, ignore the children for now
@@ -67,23 +73,32 @@ function addSharedTextStyle(document, style) {
   const textStyles = context.document.documentData().layerTextStyles();
 
   if (textStyles.addSharedStyleWithName_firstInstance) {
+    // Sketch < 50
     textStyles.addSharedStyleWithName_firstInstance(style.name, fromSJSONDictionary(style.value));
   } else {
+    // Sketch 50, 51
     // addSharedStyleWithName_firstInstance was removed in Sketch 50
-    const sharedStyle = MSSharedStyle.alloc().initWithName_firstInstance(style.name, fromSJSONDictionary(style.value));
+    const allocator = MSSharedStyle.alloc();
+    let sharedStyle;
+
+    if (allocator.initWithName_firstInstance) {
+      sharedStyle = allocator.initWithName_firstInstance(style.name, fromSJSONDictionary(style.value));
+    } else {
+      sharedStyle = allocator.initWithName_style(style.name, fromSJSONDictionary(style.value));
+    }
+
+    textStyles.addSharedObject(sharedStyle);
 
     if (style.value.sharedObjectID) {
       sharedStyle.objectID = style.value.sharedObjectID;
     }
-
-    textStyles.addSharedObject(sharedStyle);
 
     const sharedStyles = textStyles.sharedStyles();
 
     for (let i = 0; i < sharedStyles.length; ++i) {
       if (String(sharedStyles[i].objectID()) === style.value.sharedObjectID) {
         sharedStyles[i].value().sharedObjectID = style.value.sharedObjectID;
-        console.log('sharedObjectID: ' + sharedStyles[i].value().sharedObjectID());
+        console.log('Style added for sharedObjectID: ' + style.value.sharedObjectID);
       }
     }
   }
@@ -102,43 +117,14 @@ function addSharedColor(document, colorJSON) {
   assets.addColor(color);
 }
 
-export default function asketch2sketch(context) {
+export default function asketch2sketch(context, asketchFiles) {
   const document = context.document;
   const page = document.currentPage();
 
   let asketchDocument = null;
   let asketchPage = null;
 
-  const panel = NSOpenPanel.openPanel();
-
-  panel.setCanChooseDirectories(false);
-  panel.setCanChooseFiles(true);
-  panel.setAllowsMultipleSelection(true);
-  panel.setTitle('Choose *.asketch.json files');
-  panel.setPrompt('Choose');
-  panel.setAllowedFileTypes(['json']);
-
-  if (panel.runModal() !== NSModalResponseOK || panel.URLs().length === 0) {
-    return;
-  }
-
-  const urls = panel.URLs();
-
-  urls.forEach(url => {
-    const data = NSData.dataWithContentsOfURL(url);
-    const content = NSString.alloc().initWithData_encoding_(data, NSUTF8StringEncoding);
-
-    let asketchFile = null;
-
-    try {
-      asketchFile = JSON.parse(content);
-    } catch (e) {
-      const alert = NSAlert.alloc().init();
-
-      alert.setMessageText('File is not a valid JSON.');
-      alert.runModal();
-    }
-
+  asketchFiles.forEach(asketchFile => {
     if (asketchFile && asketchFile._class === 'document') {
       asketchDocument = asketchFile;
     } else if (asketchFile && asketchFile._class === 'page') {

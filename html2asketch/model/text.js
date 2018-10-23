@@ -13,6 +13,7 @@ class Text extends Base {
     this._name = text;
     this._style = style;
     this._multiline = multiline;
+    this.setResizingConstraint(RESIZING_CONSTRAINTS.HEIGHT);
   }
 
   setId(id) {

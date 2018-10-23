@@ -1,4 +1,4 @@
-# html-sketchapp [![Build Status](https://travis-ci.org/brainly/html-sketchapp.svg?branch=master)](https://travis-ci.org/brainly/html-sketchapp) [![npm version](https://badge.fury.io/js/%40brainly%2Fhtml-sketchapp.svg)](https://badge.fury.io/js/%40brainly%2Fhtml-sketchapp)
+# html-sketchapp [![Build Status](https://travis-ci.org/brainly/html-sketchapp.svg?branch=master)](https://travis-ci.org/brainly/html-sketchapp) [![npm version](https://badgen.now.sh/npm/v/@brainly/html-sketchapp)](https://www.npmjs.com/package/@brainly/html-sketchapp) [![MIT license](https://badgen.now.sh/badge/license/MIT/blue)](https://github.com/brainly/html-sketchapp/blob/master/LICENSE.md) [![npm downloads](https://badgen.now.sh/npm/dm/@brainly/html-sketchapp)](https://www.npmjs.com/package/@brainly/html-sketchapp)
 
 HTML to Sketch export solution.
 
@@ -64,3 +64,23 @@ There is no one right way of using `html2asketch`, but you can start by checking
 
 All `.asketch.json` files should be loaded to Sketch via the `./build/asketch2sketch.sketchplugin` plugin. You can download ready to use Sketch plugin from the ["Releases"](https://github.com/brainly/html-sketchapp/releases/latest) section.
 
+<img src="https://i.imgur.com/9eDm6NQ.png" width="450" alt="Installing Sketch plugin" title="Installing Sketch plugin" />
+
+You can download ready to use Sketch plugin from the ["Releases"](https://github.com/brainly/html-sketchapp/releases/latest) section, or build it yourself from the sources:
+
+```
+npm i # install dependencies
+npm run build # build the plugin
+```
+
+## Projects using html-sketchapp
+
+- [html-sketchapp-cli](https://github.com/seek-oss/html-sketchapp-cli) - "Quickly generate Sketch libraries from HTML documents and living style guides."
+- [story2sketch](https://github.com/chrisvxd/story2sketch) - "Convert Storybook stories into Sketch symbols."
+- [UIengine](https://github.com/dennisreimann/uiengine) - "Workbench for UI-driven development."
+- [Alva](https://github.com/meetalva/alva) - "Alva is a radically new design tool that enables cross-functional teams to design digital products"
+- [FAST-DNA](https://github.com/Microsoft/fast-dna) - "A set of tooling, resources, and components used to accelerate building Web sites and applications."
+
+## Standing on the shoulders of giants :heart:
+
+This project uses huge bits and pieces from the fantastic [react-sketchapp](https://github.com/airbnb/react-sketchapp) and wouldn't be possible without [skpm](https://github.com/skpm/skpm) and information from [Sketch-Headers](https://github.com/abynim/Sketch-Headers).

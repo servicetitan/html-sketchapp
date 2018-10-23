@@ -1,18 +1,28 @@
 {
   "compatibleVersion": 3,
   "bundleVersion": 1,
+  "icon": "icon.png",
   "commands": [
     {
       "name": "Servicetitan's Asketch (json) to Sketch",
-      "identifier": "asketch2sketch",
-      "script": "./asketch2sketch.js"
+      "identifier": "importFiles",
+      "script": "./importFiles.js"
+    },
+    {
+      "name": "Paste",
+      "identifier": "paste",
+      "script": "./paste.js"
     }
   ],
   "menu": {
     "isRoot": true,
     "title": "output",
-    "items": [
-      "asketch2sketch"
-    ]
+    "items": [{
+      "title": "From *Almost* Sketch to Sketch",
+      "items": [
+        "importFiles",
+        "paste"
+      ]
+    }]
   }
 }

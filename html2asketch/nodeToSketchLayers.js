@@ -1,11 +1,14 @@
-import Rectange from './model/rectangle';
+import Rectangle from './model/rectangle';
+import Bitmap from './model/bitmap';
 import SVG from './model/svg';
 import ShapeGroup from './model/shapeGroup';
+import Group from './model/group';
 import Style from './model/style';
 import Text from './model/text';
 import TextStyle from './model/textStyle';
 import createXPathFromElement from './helpers/createXPathFromElement';
-import {parseBackgroundImage} from './helpers/background';
+import {parseBackgroundImage, getActualImageSize} from './helpers/background';
+import {splitShadowString, shadowStringToObject} from './helpers/shadow';
 import {getSVGString} from './helpers/svg';
 import {getGroupBCR} from './helpers/bcr';
 import {fixWhiteSpace} from './helpers/text';
@@ -17,24 +20,6 @@ const DEFAULT_VALUES = {
   borderWidth: '0px',
   boxShadow: 'none'
 };
-
-function shadowStringToObject(shadowStr) {
-  let shadowObj = {};
-  const matches =
-    shadowStr.match(/^([a-z0-9#., ()]+) ([-]?[0-9.]+)px ([-]?[0-9.]+)px ([-]?[0-9.]+)px ([-]?[0-9.]+)px ?(inset)?$/i);
-
-  if (matches && matches.length === 7) {
-    shadowObj = {
-      color: matches[1],
-      offsetX: parseInt(matches[2], 10),
-      offsetY: parseInt(matches[3], 10),
-      blur: parseInt(matches[4], 10),
-      spread: parseInt(matches[5], 10)
-    };
-  }
-
-  return shadowObj;
-}
 
 function hasOnlyDefaultStyles(styles) {
   return Object.keys(DEFAULT_VALUES).every(key => {
@@ -62,6 +47,20 @@ function isSVGDescendant(node) {
   return (node instanceof SVGElement) && node.matches('svg *');
 }
 
+/**
+ * @param {string} fontWeight font weight as provided by the browser
+ * @return {number} normalized font weight
+ */
+function parseFontWeight(fontWeight) {
+  // Support 'bold' and 'normal' for Electron compatibility.
+  if (fontWeight === 'bold') {
+    return 700;
+  } else if (fontWeight === 'normal') {
+    return 400;
+  }
+  return parseInt(fontWeight, 10);
+}
+
 export default function nodeToSketchLayers(node, options) {
   const layers = [];
   const bcr = node.getBoundingClientRect();
@@ -73,6 +72,9 @@ export default function nodeToSketchLayers(node, options) {
   const {
     backgroundColor,
     backgroundImage,
+    backgroundPositionX,
+    backgroundPositionY,
+    backgroundSize,
     borderColor,
     borderWidth,
     borderTopWidth,
@@ -142,53 +144,43 @@ export default function nodeToSketchLayers(node, options) {
       shapeGroup.setFixedWidthAndHeight();
     }
 
-    // This should return a array when multiple background-images are supported
-    const backgroundImageResult = parseBackgroundImage(backgroundImage);
-
-    if (backgroundImageResult) {
-      switch (backgroundImageResult.type) {
-        case 'Image':
-          style.addImageFill(backgroundImageResult.value);
-          break;
-        case 'LinearGradient':
-          style.addGradientFill(backgroundImageResult.value);
-          break;
-        default:
-          // Unsupported types:
-          // - radial gradient
-          // - multiple background-image
-          break;
-      }
-    }
-
     if (boxShadow !== DEFAULT_VALUES.boxShadow) {
-      const shadowObj = shadowStringToObject(boxShadow);
+      const shadowStrings = splitShadowString(boxShadow);
 
-      if (boxShadow.indexOf('inset') !== -1) {
-        if (borderWidth.indexOf(' ') === -1) {
-          shadowObj.spread += parseInt(borderWidth, 10);
+      shadowStrings.forEach(shadowString => {
+        const shadowObject = shadowStringToObject(shadowString);
+
+        if (shadowObject.inset) {
+          if (borderWidth.indexOf(' ') === -1) {
+            shadowObject.spread += parseFloat(borderWidth);
+          }
+          style.addInnerShadow(shadowObject);
+        } else {
+          style.addShadow(shadowObject);
         }
-        style.addInnerShadow(shadowObj);
-      } else {
-        style.addShadow(shadowObj);
-      }
+      });
     }
 
     // support for one-side borders (using inner shadow because Sketch doesn't support that)
     if (borderWidth.indexOf(' ') === -1) {
-      style.addBorder({color: borderColor, thickness: parseInt(borderWidth, 10)});
+      style.addBorder({color: borderColor, thickness: parseFloat(borderWidth)});
     } else {
-      if (borderTopWidth !== '0px') {
-        style.addInnerShadow(shadowStringToObject(borderTopColor + ' 0px ' + borderTopWidth + ' 0px 0px inset'));
+      const borderTopWidthFloat = parseFloat(borderTopWidth);
+      const borderRightWidthFloat = parseFloat(borderRightWidth);
+      const borderBottomWidthFloat = parseFloat(borderBottomWidth);
+      const borderLeftWidthFloat = parseFloat(borderLeftWidth);
+
+      if (borderTopWidthFloat !== 0) {
+        style.addInnerShadow({color: borderTopColor, offsetY: borderTopWidthFloat});
       }
-      if (borderRightWidth !== '0px') {
-        style.addInnerShadow(shadowStringToObject(borderRightColor + ' -' + borderRightWidth + ' 0px 0px 0px inset'));
+      if (borderRightWidthFloat !== 0) {
+        style.addInnerShadow({color: borderRightColor, offsetX: -borderRightWidthFloat});
       }
-      if (borderBottomWidth !== '0px') {
-        style.addInnerShadow(shadowStringToObject(borderBottomColor + ' 0px -' + borderBottomWidth + ' 0px 0px inset'));
+      if (borderBottomWidthFloat !== 0) {
+        style.addInnerShadow({color: borderBottomColor, offsetY: -borderBottomWidthFloat});
       }
-      if (borderLeftWidth !== '0px') {
-        style.addInnerShadow(shadowStringToObject(borderLeftColor + ' ' + borderLeftWidth + ' 0px 0px 0px inset'));
+      if (borderLeftWidthFloat !== 0) {
+        style.addInnerShadow({color: borderLeftColor, offsetX: borderLeftWidthFloat});
       }
     }
 
@@ -206,11 +198,76 @@ export default function nodeToSketchLayers(node, options) {
       bottomRight: fixBorderRadius(borderBottomRightRadius, width, height)
     };
 
-    const rectangle = new Rectange({width, height, cornerRadius});
+    const rectangle = new Rectangle({width, height, cornerRadius});
 
     shapeGroup.addLayer(rectangle);
 
-    layers.push(shapeGroup);
+    // This should return a array once multiple background-images are supported
+    const backgroundImageResult = parseBackgroundImage(backgroundImage);
+
+    let layer = shapeGroup;
+
+    if (backgroundImageResult) {
+
+      switch (backgroundImageResult.type) {
+        case 'Image': {
+          const img = new Image();
+
+          img.src = backgroundImageResult.value;
+
+          // TODO add support for % values
+          const bitmapX = parseFloat(backgroundPositionX);
+          const bitmapY = parseFloat(backgroundPositionY);
+
+          const actualImgSize = getActualImageSize(
+            backgroundSize,
+            {width: img.width, height: img.height},
+            {width, height}
+          );
+
+          if (
+            bitmapX === 0 && bitmapY === 0 &&
+            actualImgSize.width === img.width && actualImgSize.height === img.height
+          ) {
+            // background image fits entirely inside the node, so we can represent it with a (cheaper) image fill
+            style.addImageFill(backgroundImageResult.value);
+          } else {
+            // use a Group(Shape + Bitmap) to correctly represent clipping of the background image
+            const bm = new Bitmap({
+              url: backgroundImageResult.value,
+              x: bitmapX,
+              y: bitmapY,
+              width: actualImgSize.width,
+              height: actualImgSize.height
+            });
+
+            bm.setName('background-image');
+            shapeGroup.setHasClippingMask(true);
+
+            const group = new Group({x: left, y: top, width, height});
+
+            // position is relative to the group
+            shapeGroup.setPosition({x: 0, y: 0});
+            group.addLayer(shapeGroup);
+            group.addLayer(bm);
+
+            layer = group;
+          }
+
+          break;
+        }
+        case 'LinearGradient':
+          style.addGradientFill(backgroundImageResult.value);
+          break;
+        default:
+          // Unsupported types:
+          // - radial gradient
+          // - multiple background-image
+          break;
+      }
+    }
+
+    layers.push(layer);
   }
 
   if (isSVG) {
@@ -239,7 +296,7 @@ export default function nodeToSketchLayers(node, options) {
     fontSize: parseInt(fontSize, 10),
     lineHeight: lineHeight !== 'normal' ? parseInt(lineHeight, 10) : undefined,
     letterSpacing: letterSpacing !== 'normal' ? parseFloat(letterSpacing) : undefined,
-    fontWeight: parseInt(fontWeight, 10),
+    fontWeight: parseFontWeight(fontWeight),
     color,
     textTransform,
     textDecoration: textDecorationLine,

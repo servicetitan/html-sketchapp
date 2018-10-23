@@ -1,7 +1,7 @@
 {
   "name": "@servicetitan/html-sketchapp",
-  "version": "3.2.52",
-  "description": "Servicetitan's HTML to Sketch",
+  "version": "3.2.53",
+  "description": "Servicetitan's HTML to Sketch (merged with upstream 4.0.0)",
   "keywords": [
     "sketch",
     "sketchapp",
@@ -12,7 +12,7 @@
     "type": "git",
     "url": "git+https://github.com/brainly/html-sketchapp.git"
   },
-  "author": "Brainly - Konrad Dzwinel <konrad.dzwinel@brainly.com>",
+  "author": "Brainly - Konrad Dzwinel <kdzwinel@gmail.com>",
   "license": "MIT",
   "scripts": {
     "build": "npm run build-lib && npm run build-plugin",
@@ -21,12 +21,14 @@
     "watch": "concurrently \"npm run watch-lib\" \"npm run watch-plugin\"",
     "watch-lib": "npm run build-lib -- --watch",
     "watch-plugin": "npm run build-plugin -- --watch --run",
-    "test": "npm run lint && npm run tslint && npm run unit && npm run e2e",
+    "prepare": "npm run build-plugin && npm run test",
+    "test": "npm run build-lib && npm run lint && npm run tslint && npm run unit && npm run e2e",
     "unit": "jest",
     "lint": "eslint html2asketch/ asketch2sketch/ tests/ e2e/*.js",
     "lint-fix": "npm run lint -- --fix",
     "e2e": "cd e2e && webpack --config ./webpack.config.js && node ./run.js",
-    "prepare": "npm run build && npm run test",
+    "e2e-fix": "npm run e2e -- --fix",
+    "e2e-debug": "npm run e2e -- --debug",
     "tslint": "tslint -c tslint.json typings/*.d.ts typings/**/*.d.ts"
   },
   "engines": {
@@ -34,26 +36,30 @@
   },
   "devDependencies": {
     "@skpm/builder": "^0.4.2",
-    "concurrently": "^3.5.1",
     "babel-cli": "^6.26.0",
-    "babel-preset-airbnb": "^2.4.0",
-    "eslint": "^4.16.0",
-    "frontend-tools-configs": "git+https://github.com/brainly/frontend-tools-configs.git#v16.1.4",
+    "babel-preset-airbnb": "^2.5.3",
+    "concurrently": "^3.6.1",
+    "eslint": "^5.2.0",
+    "frontend-tools-configs": "git+https://github.com/brainly/frontend-tools-configs.git#v16.2.9",
     "jest": "^21.2.1",
     "jest-cli": "^21.2.1",
-    "jsdom": "^11.6.2",
-    "puppeteer": "^1.1.1",
-    "skpm": "^1.0.15",
+    "jsdom": "^11.11.0",
+    "minimist": "^1.2.0",
+    "puppeteer": "^1.6.1",
+    "skpm": "^1.1.0",
+    "tslint": "^5.11.0",
+    "typescript": "^2.9.2",
     "variable-diff": "^1.1.0",
-    "webpack": "^4.0.0",
-    "webpack-cli": "^2.0.12",
-    "typescript": "^2.8.3",
-    "tslint": "^5.9.1"
+    "webpack": "^4.16.2",
+    "webpack-cli": "^3.1.0"
   },
   "skpm": {
     "name": "asketch2sketch",
     "manifest": "asketch2sketch/manifest.json",
-    "main": "build/asketch2sketch.sketchplugin"
+    "main": "build/asketch2sketch.sketchplugin",
+    "assets": [
+      "asketch2sketch/assets/**/*"
+    ]
   },
   "dependencies": {
     "murmur2js": "^1.0.0",
@@ -67,6 +73,7 @@
     "asketch2sketch",
     "html2asketch",
     "build/html2asketch",
+    "build/asketch2sketch.sketchplugin",
     "README.md",
     "LICENSE.md",
     "package.json",

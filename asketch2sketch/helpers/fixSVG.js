@@ -6,10 +6,25 @@ function makeNativeSVGLayer(layer) {
   const svgData = svgString.dataUsingEncoding(NSUTF8StringEncoding);
   const svgImporter = MSSVGImporter.svgImporter();
 
-  svgImporter.prepareToImportFromData(svgData);
-  const svgLayer = svgImporter.importAsLayer();
+  let svgLayer = null;
+
+  try {
+    svgImporter.prepareToImportFromData(svgData);
+    svgLayer = svgImporter.importAsLayer();
+  } catch (e) {
+    console.log('SVG import failed: ' + e);
+  }
+
+  if (svgLayer === null) {
+    return null;
+  }
+
+  while (svgLayer.layers().length === 1 && svgLayer.class() instanceof MSLayerGroup) {
+    svgLayer = svgLayer.layers()[0];
+  }
 
   svgLayer.resizingConstraint = layer.resizingConstraint;
+  svgLayer.hasClippingMask = layer.hasClippingMask;
 
   const currentSize = svgLayer.rect().size;
   const scale = Math.min(layer.width / currentSize.width, layer.height / currentSize.height);
@@ -35,6 +50,11 @@ function makeNativeSVGLayer(layer) {
 
 export default function fixSVGLayer(layer) {
   const svgLayer = makeNativeSVGLayer(layer);
+
+  if (svgLayer === null) {
+    return;
+  }
+
   const newLayerString = toSJSON(svgLayer);
   const newLayerObject = JSON.parse(newLayerString);
 
