@@ -2,7 +2,8 @@ import Group from './model/group';
 import Style from './model/style';
 import nodeToSketchLayers from './nodeToSketchLayers';
 import {isNodeVisible} from './helpers/visibility';
-import {handleSymbolAttributes} from './helpers/symbolAttributes';
+import {handleSymbolAttributes} from './helpers/symbolAttributes/';
+import {isNodeUngroup} from './helpers/symbolAttributes/utils';
 
 export default function nodeTreeToSketchGroup(node, options) {
   const bcr = node.getBoundingClientRect();
@@ -11,14 +12,21 @@ export default function nodeTreeToSketchGroup(node, options) {
   const height = bcr.bottom - bcr.top;
 
   // Collect layers for the node level itself
-  const layers = nodeToSketchLayers(node, {...options, layerOpacity: false}) || [];
+  let layers = nodeToSketchLayers(node, {...options, layerOpacity: false}) || [];
 
-  if (node.nodeName !== 'svg') {
+  if (node.nodeName.toLowerCase() !== 'svg') {
     // Recursively collect child groups for child nodes
     Array.from(node.children)
       .filter(isNodeVisible)
       .forEach(childNode => {
-        layers.push(nodeTreeToSketchGroup(childNode, options));
+        const childLayers = nodeTreeToSketchGroup(childNode, options) || [];
+
+        if (isNodeUngroup(childNode)) {
+          // Unwarapping array of layers if needed
+          layers.push(...childLayers);
+        } else {
+          layers.push(childLayers);
+        }
 
         // Traverse the shadow DOM if present
         if (childNode.shadowRoot) {
@@ -30,8 +38,26 @@ export default function nodeTreeToSketchGroup(node, options) {
       });
   }
 
-  // Now build a group for all these children
+  if (isNodeUngroup(node)) {
+    // Detecting Symbol’s node...
+    if (node.parentNode.dataset.sketchSymbolName) {
+      //console.log('Ungrouping child node of Symbol:', node);
+      const symbolBcr = node.parentNode.getBoundingClientRect();
 
+      // Layer positions are relative to Symbol’s position
+      layers.forEach(layer => {
+        layer._x -= symbolBcr.left;
+        layer._y -= symbolBcr.top;
+      });
+    }
+
+    layers = handleSymbolAttributes(node, layers) || [];
+
+    // Exit when grouping is not needed
+    return layers;
+  }
+
+  // Now build a group for all these children
   const styles = getComputedStyle(node);
   const {opacity} = styles;
 
@@ -40,6 +66,7 @@ export default function nodeTreeToSketchGroup(node, options) {
 
   groupStyle.addOpacity(opacity);
   group.setStyle(groupStyle);
+  group._nodeName = node.nodeName.toLowerCase();
 
   layers.forEach(layer => {
     // Layer positions are relative, and as we put the node position to the group,

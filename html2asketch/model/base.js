@@ -11,6 +11,7 @@ class Base {
     this._name = '';
     this._userInfo = null;
     this._rotation = 0;
+    this._isLocked = false;
     this.setResizingConstraint(RESIZING_CONSTRAINTS.NONE);
     this.setHasClippingMask(false);
   }
@@ -46,11 +47,20 @@ class Base {
   }
 
   addLayer(layer) {
+    if (Array.isArray(layer)) {
+      // Handling array of layers, needed for proper ungrouping
+      this._layers.push(...layer);
+      return;
+    }
     this._layers.push(layer);
   }
 
   setStyle(style) {
     this._style = style;
+  }
+
+  setIsLocked(isLocked) {
+    this._isLocked = isLocked;
   }
 
   setHasClippingMask(hasClippingMask) {
@@ -74,7 +84,7 @@ class Base {
       },
       'isFlippedHorizontal': false,
       'isFlippedVertical': false,
-      'isLocked': false,
+      'isLocked': this._isLocked,
       'isVisible': true,
       'layerListExpandedType': 0,
       'name': this._name || this._class,

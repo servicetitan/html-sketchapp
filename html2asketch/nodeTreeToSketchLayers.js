@@ -1,6 +1,6 @@
 import nodeToSketchLayers from './nodeToSketchLayers';
 import {isNodeVisible} from './helpers/visibility';
-import {handleSymbolAttributes} from './helpers/symbolAttributes';
+import {handleSymbolAttributes} from './helpers/symbolAttributes/';
 
 export default function nodeTreeToSketchLayers(node, options) {
   // Collect layers for the node level itself
@@ -17,7 +17,7 @@ export default function nodeTreeToSketchLayers(node, options) {
     });
   }
 
-  // Handling 'data-sketchapp-...' attributes
+  // Handling current node's 'data-sketch-...' attributes
   layers = handleSymbolAttributes(node, layers);
 
   return layers;

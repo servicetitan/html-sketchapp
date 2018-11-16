@@ -1,0 +1,2 @@
+export {handleSymbolAttributes} from './handleSymbolAttributes';
+
