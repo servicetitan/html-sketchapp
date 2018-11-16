@@ -187,7 +187,8 @@ export default function asketch2sketch(context, asketchFiles) {
     zoomToFit(context);
     collapseAllGroups(context);
 
-    const symbolsMsg = 'Symbols found: ' + asketchPage.layers.filter(layer => layer._class.toLowerCase() === 'symbolmaster').length;
+    const symbolsCount = asketchPage.layers.filter(layer => layer._class.toLowerCase() === 'symbolmaster').length;
+    const symbolsMsg = 'Symbols found: ' + symbolsCount;
 
     importAlertMsg = symbolsMsg + '\n' + importAlertMsg;
   }
