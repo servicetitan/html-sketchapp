@@ -123,6 +123,7 @@ export default function asketch2sketch(context, asketchFiles) {
 
   let asketchDocument = null;
   let asketchPage = null;
+  let importAlertMsg = '';
 
   asketchFiles.forEach(asketchFile => {
     if (asketchFile && asketchFile._class === 'document') {
@@ -136,15 +137,13 @@ export default function asketch2sketch(context, asketchFiles) {
     removeSharedColors(document);
     removeSharedTextStyles(document);
 
-    let alertMsg = '';
-
     if (asketchDocument.assets.colors) {
       asketchDocument.assets.colors.forEach(color => addSharedColor(document, color));
 
       const colorsMsg = 'Shared colors added: ' + asketchDocument.assets.colors.length;
 
       console.log(colorsMsg);
-      alertMsg += colorsMsg + '\n';
+      importAlertMsg += colorsMsg + '\n';
     }
 
     if (asketchDocument.layerTextStyles && asketchDocument.layerTextStyles.objects) {
@@ -156,10 +155,7 @@ export default function asketch2sketch(context, asketchFiles) {
       const textStylesMsg = 'Shared text styles added: ' + asketchDocument.layerTextStyles.objects.length;
 
       console.log(textStylesMsg);
-      alertMsg += textStylesMsg + '\n';
-    }
-    if (alertMsg) {
-      UI.alert('asketch2sketch', alertMsg);
+      importAlertMsg += textStylesMsg + '\n';
     }
   }
 
@@ -167,6 +163,10 @@ export default function asketch2sketch(context, asketchFiles) {
     removeExistingLayers(page);
 
     page.name = asketchPage.name;
+
+    const symbolsMsg = 'Symbols added: ' + asketchPage.layers.filter(layer => layer._class === 'SymbolMaster').length;
+
+    importAlertMsg = symbolsMsg + '\n' + importAlertMsg;
 
     const failingLayers = [];
 
@@ -190,5 +190,9 @@ export default function asketch2sketch(context, asketchFiles) {
 
     zoomToFit(context);
     collapseAllGroups(context);
+  }
+
+  if (importAlertMsg) {
+    UI.alert('asketch2sketch', importAlertMsg);
   }
 }
