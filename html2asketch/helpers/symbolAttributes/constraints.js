@@ -22,7 +22,6 @@ export default function applyConstraints(node, element) {
 export function applyConstraintToText(textNode, text) {
   const parent = textNode.parentNode;
   const parentBCR = parent.getBoundingClientRect();
-  const grandpaBCR = parent.parentNode.getBoundingClientRect();
   const isSole = parent.childNodes.length === 1;
   const constraint = parent.getAttribute('data-sketch-constraints');
 
@@ -70,6 +69,13 @@ export function applyConstraintToText(textNode, text) {
   // Returns 'top', 'center' or 'bottom'
   const detectVerticalAlignment = () => {
     const parentHeight = parentBCR.bottom - parentBCR.top;
+    const grandpa = parent.parentNode;
+
+    if (!parent.hasOwnProperty('parentNode') || !grandpa.hasOwnProperty('getBoundingClientRect')) {
+      return 'undefined';
+    }
+
+    const grandpaBCR = parent.parentNode.getBoundingClientRect();
     const grandpaHeight = grandpaBCR.bottom - grandpaBCR.top;
     const relativeTopOffset = (grandpaHeight - (parentBCR.top - grandpaBCR.top + parentHeight / 2)) / grandpaHeight;
 
