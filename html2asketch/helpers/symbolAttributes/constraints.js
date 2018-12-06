@@ -25,13 +25,24 @@ export function applyConstraintToText(textNode, text) {
   const grandParentBCR = parent.parentNode.getBoundingClientRect();
   const isSole = parent.childNodes.length === 1;
   const constraint = parent.getAttribute('data-sketch-constraints');
+  
+  // Setting text's constraint same as on node
+  text._resizingConstraint = constraint;
 
   if (isSole && constraint) {
-    text._resizingConstraint = constraint;
-    // Using height of the parent instead of rangeHelper.getBoundingClientRect()...
-    text._height = parentBCR.bottom - parentBCR.top;
-    text._textBehaviour = 2;
-    text._multiline = true;
+    if (!text._multiline) {
+      // Setting width for non-inline elements (width of their wrapper much wider than text)
+      if (1.3 < (parentBCR.right - parentBCR.left) / text._width) {
+        text._width = parentBCR.right - parentBCR.left;
+        text._x = parentBCR.left;
+        //console.log('Setting large width of text for non-inline elements', text);
+      }
+
+      // Always using height of the parent instead of rangeHelper.getBoundingClientRect()...
+      text._height = parentBCR.bottom - parentBCR.top;
+      text._textBehaviour = 2;
+      text._multiline = true;
+    }
 
     // Handling text nodes that are pinned to both left and right or top and bottom
     const constraintSet = new Set(constraintToArray(constraint));
@@ -42,6 +53,8 @@ export function applyConstraintToText(textNode, text) {
       //console.log('isPinnedHorizontally', text);
       text._x = parentBCR.left;
       text._width = parentBCR.right - parentBCR.left;
+      text._textBehaviour = 2;
+      text._multiline = true;
     }
 
     // Pinned vertically case...
