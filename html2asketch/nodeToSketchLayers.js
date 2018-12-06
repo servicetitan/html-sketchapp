@@ -13,6 +13,8 @@ import {getSVGString} from './helpers/svg';
 import {getGroupBCR} from './helpers/bcr';
 import {fixWhiteSpace} from './helpers/text';
 import {isNodeVisible, isTextVisible} from './helpers/visibility';
+import {applyConstraintToText} from './helpers/symbolAttributes/constraints';
+
 
 const DEFAULT_VALUES = {
   backgroundColor: 'rgba(0, 0, 0, 0)',
@@ -310,34 +312,43 @@ export default function nodeToSketchLayers(node, options) {
   Array.from(node.childNodes)
     .filter(child => child.nodeType === 3 && child.nodeValue.trim().length > 0)
     .forEach(textNode => {
+
       rangeHelper.selectNodeContents(textNode);
       const textRanges = Array.from(rangeHelper.getClientRects());
       const numberOfLines = textRanges.length;
-      const textBCR = rangeHelper.getBoundingClientRect();
       const lineHeightInt = parseInt(lineHeight, 10);
-      const textBCRHeight = textBCR.bottom - textBCR.top;
+      const textBCR = rangeHelper.getBoundingClientRect();
+      let textLeft = textBCR.left;
+      let textTop = textBCR.top;
+      let textWidth = textBCR.right - textBCR.left;
+      let textHeight = textBCR.bottom - textBCR.top;
+
       const textHeightByLines = numberOfLines * lineHeightInt;
-      let fixY = 0;
 
       // center text inside a box
       // TODO it's possible now in sketch - fix it!
-      if (lineHeightInt && textBCRHeight !== textHeightByLines) {
-        fixY = (textBCRHeight - textHeightByLines) / 2;
+      if (lineHeightInt && textHeight !== textHeightByLines) {
+        let fixY = 0;
+        fixY = (textHeight - textHeightByLines) / 2;
+        textTop += fixY;
       }
 
       const textValue = fixWhiteSpace(textNode.nodeValue, whiteSpace);
 
-      const text = new Text({
-        x: textBCR.left,
-        y: textBCR.top + fixY,
-        width: textBCR.right - textBCR.left,
-        height: textBCRHeight,
+      let text = new Text({
+        x: textLeft,
+        y: textTop,
+        width: textWidth,
+        height: textHeight,
         text: textValue,
         style: textStyle,
         multiline: numberOfLines > 1
       });
 
       text._heightByLines = textHeightByLines;
+
+      // Applying resizing constraint from parent node if needed...
+      text = applyConstraintToText(textNode, text);
 
       layers.push(text);
     });

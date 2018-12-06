@@ -38,13 +38,14 @@ class Text extends Base {
     // text nodes don't have child layers
     delete obj.layers;
 
-    obj.resizingConstraint = calculateResizingConstraintValue(RESIZING_CONSTRAINTS.HEIGHT);
+    obj.resizingConstraint = this._resizingConstraint || calculateResizingConstraintValue(RESIZING_CONSTRAINTS.HEIGHT);
     obj.automaticallyDrawOnUnderlyingPath = false;
     obj.dontSynchroniseWithSymbol = false;
     obj.lineSpacingBehaviour = 2;
+    // 2 - vertical alignment is allowed
     // 1 - width is set to Fixed
     // 0 - width is set to Auto - this helps us avoid issues with browser setting too small width causing line to break
-    obj.textBehaviour = this._multiline ? 1 : 0;
+    obj.textBehaviour = this._textBehaviour || this._multiline ? 1 : 0;
 
     return obj;
   }
