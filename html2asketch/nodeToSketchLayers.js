@@ -15,7 +15,6 @@ import {fixWhiteSpace} from './helpers/text';
 import {isNodeVisible, isTextVisible} from './helpers/visibility';
 import {applyConstraintToText} from './helpers/symbolAttributes/constraints';
 
-
 const DEFAULT_VALUES = {
   backgroundColor: 'rgba(0, 0, 0, 0)',
   backgroundImage: 'none',
@@ -318,26 +317,26 @@ export default function nodeToSketchLayers(node, options) {
       const numberOfLines = textRanges.length;
       const lineHeightInt = parseInt(lineHeight, 10);
       const textBCR = rangeHelper.getBoundingClientRect();
-      let textLeft = textBCR.left;
-      let textTop = textBCR.top;
-      let textWidth = textBCR.right - textBCR.left;
-      let textHeight = textBCR.bottom - textBCR.top;
+      const textLeft = textBCR.left;
+      const textTop = textBCR.top;
+      const textWidth = textBCR.right - textBCR.left;
+      const textHeight = textBCR.bottom - textBCR.top;
 
       const textHeightByLines = numberOfLines * lineHeightInt;
+
+      let fixY = 0;
 
       // center text inside a box
       // TODO it's possible now in sketch - fix it!
       if (lineHeightInt && textHeight !== textHeightByLines) {
-        let fixY = 0;
         fixY = (textHeight - textHeightByLines) / 2;
-        textTop += fixY;
       }
 
       const textValue = fixWhiteSpace(textNode.nodeValue, whiteSpace);
 
       let text = new Text({
         x: textLeft,
-        y: textTop,
+        y: textTop + fixY,
         width: textWidth,
         height: textHeight,
         text: textValue,

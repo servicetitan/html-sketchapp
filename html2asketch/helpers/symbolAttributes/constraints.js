@@ -22,10 +22,10 @@ export default function applyConstraints(node, element) {
 export function applyConstraintToText(textNode, text) {
   const parent = textNode.parentNode;
   const parentBCR = parent.getBoundingClientRect();
-  const grandParentBCR = parent.parentNode.getBoundingClientRect();
+  const grandpaBCR = parent.parentNode.getBoundingClientRect();
   const isSole = parent.childNodes.length === 1;
   const constraint = parent.getAttribute('data-sketch-constraints');
-  
+
   // Setting text's constraint same as on node
   text._resizingConstraint = constraint;
 
@@ -46,8 +46,10 @@ export function applyConstraintToText(textNode, text) {
 
     // Handling text nodes that are pinned to both left and right or top and bottom
     const constraintSet = new Set(constraintToArray(constraint));
-    const isPinnedHorizontally = constraintSet.has('Align Left') && constraintSet.has('Align Right') && !constraintSet.has('Fixed Width');
-    const isPinnedVertically = constraintSet.has('Align Top') && constraintSet.has('Align Bottom') && !constraintSet.has('Fixed Height');
+    const isPinnedHorizontally =
+      constraintSet.has('Align Left') && constraintSet.has('Align Right') && !constraintSet.has('Fixed Width');
+    const isPinnedVertically =
+      constraintSet.has('Align Top') && constraintSet.has('Align Bottom') && !constraintSet.has('Fixed Height');
 
     if (isPinnedHorizontally) {
       //console.log('isPinnedHorizontally', text);
@@ -63,27 +65,28 @@ export function applyConstraintToText(textNode, text) {
       text._y = parentBCR.top;
       text._height = parentBCR.bottom - parentBCR.top;
     }
-
-    // Returns 'top', 'center' or 'bottom'
-    const detectVerticalAlignment = () => {
-      const parentHeight = parentBCR.bottom - parentBCR.top;
-      const grandParentHeight = grandParentBCR.bottom - grandParentBCR.top;
-      const relativeToParentTopOffset = (grandParentHeight - (parentBCR.top - grandParentBCR.top + parentHeight / 2)) / grandParentHeight;
-
-      if (0 <= relativeToParentTopOffset && relativeToParentTopOffset < .332) {
-        return 'top';
-      }
-      if (.332 <= relativeToParentTopOffset && relativeToParentTopOffset <= .667) {
-        return 'center';
-      }
-      if (.667 < relativeToParentTopOffset && relativeToParentTopOffset <= 1) {
-        return 'bottom';
-      }
-      return 'undefined'
-    }
   }
+
+  // Returns 'top', 'center' or 'bottom'
+  const detectVerticalAlignment = () => {
+    const parentHeight = parentBCR.bottom - parentBCR.top;
+    const grandpaHeight = grandpaBCR.bottom - grandpaBCR.top;
+    const relativeTopOffset = (grandpaHeight - (parentBCR.top - grandpaBCR.top + parentHeight / 2)) / grandpaHeight;
+
+    if (0 <= relativeTopOffset && relativeTopOffset < .332) {
+      return 'top';
+    }
+    if (.332 <= relativeTopOffset && relativeTopOffset <= .667) {
+      return 'center';
+    }
+    if (.667 < relativeTopOffset && relativeTopOffset <= 1) {
+      return 'bottom';
+    }
+    return 'undefined';
+  };
+
   // Vertical alignment is not yet supported, see https://github.com/airbnb/react-sketchapp/issues/366
-  // setTextStyle();
+  text._verticalAlignment = detectVerticalAlignment();
 
   return text;
 }

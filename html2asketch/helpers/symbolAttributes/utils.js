@@ -80,14 +80,17 @@ export function constraintToArray(constraint) {
   */
 
   let constraintArray = [];
+
   constraint = parseInt(constraint);
-  
+
   if (constraint < 0 || constraint > 63) {
     return [];
   }
+
   const constraintAsBinaryString = (64 + constraint).toString(2).substr(1);
+
   constraintArray = fullConstraintArray
-    .map((item, index) => constraintAsBinaryString.charAt(index) === '0' ? item : '' )
+    .map((item, index) => (constraintAsBinaryString.charAt(index) === '0' ? item : ''))
     .filter(item => item !== '');
   return constraintArray;
 }
