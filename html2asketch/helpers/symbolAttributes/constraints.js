@@ -39,7 +39,7 @@ export function applyConstraintToText(textNode, text) {
     const isPinnedVertically = constraintSet.has('Align Top') && constraintSet.has('Align Bottom') && !constraintSet.has('Fixed Height');
 
     if (isPinnedHorizontally) {
-      console.log('isPinnedHorizontally', text);
+      //console.log('isPinnedHorizontally', text);
       text._x = parentBCR.left;
       text._width = parentBCR.right - parentBCR.left;
     }

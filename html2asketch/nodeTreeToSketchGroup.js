@@ -12,7 +12,7 @@ export default function nodeTreeToSketchGroup(node, options) {
   const height = bcr.bottom - bcr.top;
 
   // Collect layers for the node level itself
-  let layers = nodeToSketchLayers(node, {...options, layerOpacity: false}) || [];
+  let layers = nodeToSketchLayers(node, {...options, layerOpacity: isNodeUngroup(node) ? true : false}) || [];
 
   if (node.nodeName.toLowerCase() !== 'svg') {
     // Recursively collect child groups for child nodes
@@ -39,7 +39,7 @@ export default function nodeTreeToSketchGroup(node, options) {
   }
 
   if (isNodeUngroup(node)) {
-    // Detecting Symbol’s node...
+    // Processing of Symbol’s node...
     if (node.parentNode.dataset.sketchSymbolName) {
       //console.log('Ungrouping child node of Symbol:', node);
       const symbolBcr = node.parentNode.getBoundingClientRect();

@@ -7,17 +7,14 @@ export default function applyUngroup(node, element) {
     }
 
     if (isLayers(element)) {
-      // Applying opacity to groups’ layers
-      const styles = getComputedStyle(node);
+      // Applying opacity to layers of the group...
+      const groupOpacity = getComputedStyle(node).opacity;
 
       element.forEach(layer => {
-        if (styles.groupOpacity < 1) {
+        if (groupOpacity < 1) {
           const layerOpacity = layer._style._opacity || 1;
 
-          console.log('opa:', styles.groupOpacity);
-          console.log('LaySty:', layer._style);
-          layer._style._opacity(styles.groupOpacity * layerOpacity);
-          console.log('LaySty:', layer._style._opacity);
+          layer._style._opacity = groupOpacity * layerOpacity;
         }
       });
     }
