@@ -13,7 +13,7 @@ import {getSVGString} from './helpers/svg';
 import {getGroupBCR} from './helpers/bcr';
 import {fixWhiteSpace} from './helpers/text';
 import {isNodeVisible, isTextVisible} from './helpers/visibility';
-import {applyConstraintToText} from './helpers/symbolAttributes/constraints';
+import {applyConstraintsToText} from './helpers/symbolAttributes/constraints';
 
 const DEFAULT_VALUES = {
   backgroundColor: 'rgba(0, 0, 0, 0)',
@@ -315,6 +315,7 @@ export default function nodeToSketchLayers(node, options) {
       rangeHelper.selectNodeContents(textNode);
       const textRanges = Array.from(rangeHelper.getClientRects());
       const numberOfLines = textRanges.length;
+
       const lineHeightInt = parseInt(lineHeight, 10);
       const textBCR = rangeHelper.getBoundingClientRect();
       const textLeft = textBCR.left;
@@ -347,7 +348,7 @@ export default function nodeToSketchLayers(node, options) {
       text._heightByLines = textHeightByLines;
 
       // Applying resizing constraint from parent node if needed...
-      text = applyConstraintToText(textNode, text);
+      text = applyConstraintsToText(textNode, text);
 
       layers.push(text);
     });

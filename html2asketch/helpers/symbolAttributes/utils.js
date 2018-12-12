@@ -24,6 +24,12 @@ export function isPinnedVertically(node) {
   return attr === 'true' || attr === true || false;
 }
 
+export function isInline(node) {
+  const attr = node.getAttribute('data-sketch-pinned-vertically');
+
+  return attr === 'true' || attr === true || false;
+}
+
 export function renameTextLayerInArray(el, name) {
   for (const key in el) {
     if (el[key]._class === 'text') {

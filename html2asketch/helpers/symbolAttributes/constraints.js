@@ -1,17 +1,17 @@
 import {isGroup, isLayers, constraintToArray} from './utils';
 
-export default function applyConstraints(node, element) {
-  const constraints = node.getAttribute('data-sketch-constraints') || false;
+export const constraints = (node) => node.getAttribute('data-sketch-constraints') || false;
 
-  if (constraints) {
+export default function applyConstraints(node, element) {
+  if (constraints(node)) {
     //console.log(`Constraints (${constraints}) @`, element);
 
     if (isGroup(element)) {
-      element._resizingConstraint = constraints;
+      element._resizingConstraint = constraints(node);
     }
-    if (constraints && isLayers(element)) {
+    if (isLayers(element)) {
       element.forEach(layer => {
-        layer._resizingConstraint = constraints;
+        layer._resizingConstraint = constraints(node);
       });
     }
   }
@@ -19,80 +19,96 @@ export default function applyConstraints(node, element) {
   return element;
 }
 
-export function applyConstraintToText(textNode, text) {
+export function applyConstraintsToText(textNode, text) {
   const parent = textNode.parentNode;
+
+  // Exit early if no constraint defined
+  if (!constraints(parent)) {
+    return text;
+  }
+
   const parentBCR = parent.getBoundingClientRect();
+  const parentPadding = {
+    left: parseFloat(getComputedStyle(parent).paddingLeft),
+    right: parseFloat(getComputedStyle(parent).paddingRight),
+    top: parseFloat(getComputedStyle(parent).paddingTop),
+    bottom: parseFloat(getComputedStyle(parent).paddingBottom),
+    x: parseFloat(getComputedStyle(parent).paddingLeft) + parseFloat(getComputedStyle(parent).paddingRight),
+    y: parseFloat(getComputedStyle(parent).paddingTop) + parseFloat(getComputedStyle(parent).paddingBottom)
+  };
   const isSole = parent.childNodes.length === 1;
-  const constraint = parent.getAttribute('data-sketch-constraints');
 
-  // Setting text's constraint same as on node
-  text._resizingConstraint = constraint;
+  if (isSole) {
+    // Setting text's constraints same as on container
+    text._resizingConstraint = constraints(parent);
 
-  if (isSole && constraint) {
+    const availiableSpaceX = parentBCR.right - parentBCR.left - parentPadding.x;
+    const availiableSpaceY = parentBCR.bottom - parentBCR.top - parentPadding.y;
+
     if (!text._multiline) {
-      // Setting width for non-inline elements (width of their wrapper much wider than text)
-      if (1.3 < (parentBCR.right - parentBCR.left) / text._width) {
-        text._width = parentBCR.right - parentBCR.left;
-        text._x = parentBCR.left;
-        //console.log('Setting large width of text for non-inline elements', text);
-      }
-
-      // Always using height of the parent instead of rangeHelper.getBoundingClientRect()...
-      text._height = parentBCR.bottom - parentBCR.top;
+      // Always use height of the parent instead of rangeHelper.getBoundingClientRect()
+      text._height = availiableSpaceY;
       text._textBehaviour = 2;
-      text._multiline = true;
+
+      const textWidthToSpaceRatio = text._width / availiableSpaceX;
+
+      // Setting proper width of text, if width of available space is much wider than text
+      if (textWidthToSpaceRatio < .96) {
+        //console.log('non-inline element', text._text, text);
+        text._x = parentBCR.left + parentPadding.left;
+        text._width = availiableSpaceX;
+      } else {
+        //console.log('inline element', text._text, text._style._textAlign);
+      }
     }
 
     // Handling text nodes that are pinned to both left and right or top and bottom
-    const constraintSet = new Set(constraintToArray(constraint));
+    const constraintSet = new Set(constraintToArray(constraints(parent)));
     const isPinnedHorizontally =
       constraintSet.has('Align Left') && constraintSet.has('Align Right') && !constraintSet.has('Fixed Width');
+
+    if (isPinnedHorizontally) {
+      text._x = parentBCR.left + parentPadding.left;
+      text._width = availiableSpaceX;
+      text._textBehaviour = 2;
+    }
+
     const isPinnedVertically =
       constraintSet.has('Align Top') && constraintSet.has('Align Bottom') && !constraintSet.has('Fixed Height');
 
-    if (isPinnedHorizontally) {
-      //console.log('isPinnedHorizontally', text);
-      text._x = parentBCR.left;
-      text._width = parentBCR.right - parentBCR.left;
-      text._textBehaviour = 2;
-      text._multiline = true;
-    }
-
-    // Pinned vertically case...
     if (isPinnedVertically) {
-      //console.log('isPinnedVertically', text);
-      text._y = parentBCR.top;
-      text._height = parentBCR.bottom - parentBCR.top;
+      text._y = parentBCR.top + parentPadding.top;
+      text._height = availiableSpaceY;
     }
   }
-
-  // Returns 'top', 'center' or 'bottom'
-  const detectVerticalAlignment = () => {
-    const parentHeight = parentBCR.bottom - parentBCR.top;
-    const grandpa = parent.parentNode;
-
-    if (!parent.hasOwnProperty('parentNode') || !grandpa.hasOwnProperty('getBoundingClientRect')) {
-      return 'undefined';
-    }
-
-    const grandpaBCR = parent.parentNode.getBoundingClientRect();
-    const grandpaHeight = grandpaBCR.bottom - grandpaBCR.top;
-    const relativeTopOffset = (grandpaHeight - (parentBCR.top - grandpaBCR.top + parentHeight / 2)) / grandpaHeight;
-
-    if (0 <= relativeTopOffset && relativeTopOffset < .332) {
-      return 'top';
-    }
-    if (.332 <= relativeTopOffset && relativeTopOffset <= .667) {
-      return 'center';
-    }
-    if (.667 < relativeTopOffset && relativeTopOffset <= 1) {
-      return 'bottom';
-    }
-    return 'undefined';
-  };
 
   // Vertical alignment is not yet supported, see https://github.com/airbnb/react-sketchapp/issues/366
   text._verticalAlignment = detectVerticalAlignment();
 
   return text;
 }
+
+// Returns 'top', 'center' or 'bottom'
+export const detectVerticalAlignment = () => {
+  // Detecting unusual grandparent
+  if (!parent.hasOwnProperty('parentNode') || !parent.parentNode.hasOwnProperty('getBoundingClientRect')) {
+    return 'undefined';
+  }
+
+  const parentHeight = parentBCR.bottom - parentBCR.top;
+  const grandpa = parent.parentNode;
+  const grandpaBCR = parent.parentNode.getBoundingClientRect();
+  const grandpaHeight = grandpaBCR.bottom - grandpaBCR.top;
+  const relativeTopOffset = (grandpaHeight - (parentBCR.top - grandpaBCR.top + parentHeight / 2)) / grandpaHeight;
+
+  if (0 <= relativeTopOffset && relativeTopOffset < .332) {
+    return 'top';
+  }
+  if (.332 <= relativeTopOffset && relativeTopOffset <= .667) {
+    return 'center';
+  }
+  if (.667 < relativeTopOffset && relativeTopOffset <= 1) {
+    return 'bottom';
+  }
+  return 'undefined';
+};
