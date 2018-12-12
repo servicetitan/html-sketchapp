@@ -1,6 +1,6 @@
 import {isGroup, isLayers, constraintToArray} from './utils';
 
-export const constraints = (node) => node.getAttribute('data-sketch-constraints') || false;
+export const constraints = node => node.getAttribute('data-sketch-constraints') || false;
 
 export default function applyConstraints(node, element) {
   if (constraints(node)) {
@@ -83,20 +83,22 @@ export function applyConstraintsToText(textNode, text) {
   }
 
   // Vertical alignment is not yet supported, see https://github.com/airbnb/react-sketchapp/issues/366
-  text._verticalAlignment = detectVerticalAlignment();
+  text._verticalAlignment = detectVerticalAlignment(textNode);
 
   return text;
 }
 
 // Returns 'top', 'center' or 'bottom'
-export const detectVerticalAlignment = () => {
+export const detectVerticalAlignment = textNode => {
+  const parent = textNode.parentNode;
+  const parentBCR = parent.getBoundingClientRect();
+
   // Detecting unusual grandparent
   if (!parent.hasOwnProperty('parentNode') || !parent.parentNode.hasOwnProperty('getBoundingClientRect')) {
     return 'undefined';
   }
 
   const parentHeight = parentBCR.bottom - parentBCR.top;
-  const grandpa = parent.parentNode;
   const grandpaBCR = parent.parentNode.getBoundingClientRect();
   const grandpaHeight = grandpaBCR.bottom - grandpaBCR.top;
   const relativeTopOffset = (grandpaHeight - (parentBCR.top - grandpaBCR.top + parentHeight / 2)) / grandpaHeight;

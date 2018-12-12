@@ -323,7 +323,8 @@ export default function nodeToSketchLayers(node, options) {
       const textHeight = textBCR.bottom - textBCR.top;
 
       const textlength = textNode.nodeValue.trim().length;
-      const fixTextWrapping = (numberOfLines === 1 && textlength > 2) ? .5 : 0;
+      // Fixing bug: rounding to pixel grid in Chrome leads to line wrapping in Sketch
+      const fixTextWrapping = numberOfLines === 1 && textlength > 1 ? .5 : 0;
       const textWidth = textBCR.right - textBCR.left + fixTextWrapping;
 
       const textHeightByLines = numberOfLines * lineHeightInt;
