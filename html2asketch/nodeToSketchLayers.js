@@ -320,8 +320,11 @@ export default function nodeToSketchLayers(node, options) {
       const textBCR = rangeHelper.getBoundingClientRect();
       const textLeft = textBCR.left;
       const textTop = textBCR.top;
-      const textWidth = textBCR.right - textBCR.left;
       const textHeight = textBCR.bottom - textBCR.top;
+
+      const textlength = textNode.nodeValue.trim().length;
+      const fixTextWrapping = (numberOfLines === 1 && textlength > 2) ? .5 : 0;
+      const textWidth = textBCR.right - textBCR.left + fixTextWrapping;
 
       const textHeightByLines = numberOfLines * lineHeightInt;
 
