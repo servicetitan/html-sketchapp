@@ -289,7 +289,7 @@
                     "_class": "rect",
                     "constrainProportions": false,
                     "height": 17,
-                    "width": 41,
+                    "width": 42,
                     "x": 2,
                     "y": 2
                   },
@@ -495,6 +495,16 @@
                         "thickness": 4
                       }
                     ],
+                    "borderOptions": {
+                      "_class": "borderOptions",
+                      "isEnabled": false,
+                      "dashPattern": [
+                        12,
+                        8
+                      ],
+                      "lineCapStyle": 0,
+                      "lineJoinStyle": 0
+                    },
                     "shadows": [],
                     "innerShadows": [],
                     "endDecorationType": 0,
@@ -553,7 +563,7 @@
                     "_class": "rect",
                     "constrainProportions": false,
                     "height": 17,
-                    "width": 41,
+                    "width": 42,
                     "x": 4,
                     "y": 4
                   },
@@ -817,7 +827,7 @@
                     "_class": "rect",
                     "constrainProportions": false,
                     "height": 17,
-                    "width": 84,
+                    "width": 85,
                     "x": 2,
                     "y": 2
                   },
@@ -1081,7 +1091,7 @@
                     "_class": "rect",
                     "constrainProportions": false,
                     "height": 17,
-                    "width": 84,
+                    "width": 85,
                     "x": 2,
                     "y": 2
                   },
