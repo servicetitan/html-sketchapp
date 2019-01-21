@@ -55,7 +55,7 @@ class Style {
     this._fills.push(fill);
   }
 
-  addBorder({color, thickness}) {
+  addBorder({color, thickness, ...options}) {
     this._borders.push({
       _class: 'border',
       isEnabled: true,
@@ -64,6 +64,15 @@ class Style {
       position: 1,
       thickness
     });
+    if (options.dashed) {
+      this._borderOptions = {
+        _class: 'borderOptions',
+        isEnabled: false,
+        dashPattern: [thickness * 3, thickness * 2],
+        lineCapStyle: 0,
+        lineJoinStyle: 0
+      };
+    }
   }
 
   addShadow({color = '#000', blur = 1, offsetX = 0, offsetY = 0, spread = 0}) {
@@ -109,6 +118,7 @@ class Style {
       _class: 'style',
       fills: this._fills,
       borders: this._borders,
+      borderOptions: this._borderOptions,
       shadows: this._shadows,
       innerShadows: this._innerShadows,
       endDecorationType: 0,

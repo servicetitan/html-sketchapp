@@ -77,6 +77,7 @@ export default function nodeToSketchLayers(node, options) {
     backgroundPositionY,
     backgroundSize,
     borderColor,
+    borderStyle,
     borderWidth,
     borderTopWidth,
     borderRightWidth,
@@ -164,7 +165,7 @@ export default function nodeToSketchLayers(node, options) {
 
     // support for one-side borders (using inner shadow because Sketch doesn't support that)
     if (borderWidth.indexOf(' ') === -1) {
-      style.addBorder({color: borderColor, thickness: parseFloat(borderWidth)});
+      style.addBorder({ color: borderColor, thickness: parseFloat(borderWidth), dashed: (borderStyle.indexOf('dashed') !== -1) });
     } else {
       const borderTopWidthFloat = parseFloat(borderTopWidth);
       const borderRightWidthFloat = parseFloat(borderRightWidth);
