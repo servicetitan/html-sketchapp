@@ -3,17 +3,18 @@ import {generateID, RESIZING_CONSTRAINTS, calculateResizingConstraintValue} from
 const DEFAULT_USER_INFO_SCOPE = 'html-sketchapp';
 
 class Base {
-  constructor() {
+  constructor({id} = {}) {
     this._class = null;
     this._layers = [];
     this._style = null;
-    this._objectID = generateID();
+    this._objectID = id || generateID();
     this._name = '';
     this._userInfo = null;
     this._rotation = 0;
     this._isLocked = false;
     this.setResizingConstraint(RESIZING_CONSTRAINTS.NONE);
     this.setHasClippingMask(false);
+    this.setIsLocked(false);
   }
 
   setFixedWidthAndHeight() {
@@ -26,6 +27,10 @@ class Base {
 
   getID() {
     return this._objectID;
+  }
+
+  setObjectID(id) {
+    this._objectID = id;
   }
 
   // scope defines which Sketch plugin will have access to provided data via Settings.setLayerSettingForKey
@@ -65,6 +70,10 @@ class Base {
 
   setHasClippingMask(hasClippingMask) {
     this._hasClippingMask = hasClippingMask;
+  }
+
+  setIsLocked(isLocked) {
+    this._isLocked = isLocked;
   }
 
   toJSON() {

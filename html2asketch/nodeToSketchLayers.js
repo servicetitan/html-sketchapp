@@ -359,6 +359,10 @@ export default function nodeToSketchLayers(node, options) {
       // Applying resizing constraint from parent node if needed...
       text = applyConstraintsToText(textNode, text);
 
+      if (options && options.onTextGenerate) {
+        options.onTextGenerate({layer: text, node: textNode});
+      }
+
       layers.push(text);
     });
 

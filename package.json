@@ -1,7 +1,7 @@
 {
   "name": "@servicetitan/html-sketchapp",
-  "version": "4.0.5",
-  "description": "Servicetitan's HTML to Sketch (merged with upstream 4.0.1)",
+  "version": "4.1.1",
+  "description": "Servicetitan's HTML to Sketch (merged with upstream 4.1.0)",
   "keywords": [
     "sketch",
     "sketchapp",
