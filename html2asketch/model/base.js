@@ -64,10 +64,6 @@ class Base {
     this._style = style;
   }
 
-  setIsLocked(isLocked) {
-    this._isLocked = isLocked;
-  }
-
   setHasClippingMask(hasClippingMask) {
     this._hasClippingMask = hasClippingMask;
   }
