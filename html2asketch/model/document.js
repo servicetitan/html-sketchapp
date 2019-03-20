@@ -21,6 +21,7 @@ class Document {
   constructor() {
     this._objectID = generateID();
     this._colors = [];
+    this._colorAssets = [];
     this._textStyles = [];
     this._pages = [];
   }
@@ -45,8 +46,13 @@ class Document {
     this._textStyles.push(textStyleToSharedStyle(textLayer, id));
   }
 
-  addColor(color) {
+  addColor(color, name) {
     this._colors.push(makeColorFromCSS(color));
+    this._colorAssets.push({
+      '_class': 'MSImmutableColorAsset',
+      'name': name,
+      'color': makeColorFromCSS(color)
+    });
   }
 
   toJSON() {
@@ -55,7 +61,8 @@ class Document {
       'do_objectID': this._objectID,
       'assets': {
         '_class': 'assetCollection',
-        'colors': this._colors
+        'colors': this._colors,
+        'colorAssets':  this._colorAssets
       },
       'currentPageIndex': 0,
       'enableLayerInteraction': true,

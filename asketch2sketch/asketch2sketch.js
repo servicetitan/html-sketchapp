@@ -110,11 +110,15 @@ function removeSharedColors(document) {
   assets.removeAllColorAssets();
 }
 
-function addSharedColor(document, colorJSON) {
+function addSharedColor(document, colorJSON, colorName) {
   const assets = document.documentData().assets();
   const color = fromSJSONDictionary(colorJSON);
 
-  assets.addColorAsset(color);
+  if (colorName !== undefined) {
+    assets.addAsset_withName_(color, colorName);
+  } else {
+    assets.addAsset(color);
+  }
 }
 
 export default function asketch2sketch(context, asketchFiles) {
@@ -137,10 +141,18 @@ export default function asketch2sketch(context, asketchFiles) {
     removeSharedColors(document);
     removeSharedTextStyles(document);
 
-    if (asketchDocument.assets.colors) {
-      asketchDocument.assets.colors.forEach(color => addSharedColor(document, color));
+    if (asketchDocument.assets.colorAssets || asketchDocument.assets.colors) {
+      let colorsMsg = '';
 
-      const colorsMsg = 'Shared colors found: ' + asketchDocument.assets.colors.length;
+      if (asketchDocument.assets.colorAssets) {
+        // For versions of Sketch 53 and higher
+        asketchDocument.assets.colorAssets.forEach(colorObj => addSharedColor(document, colorObj.color, colorObj.name));
+        colorsMsg = 'Shared colorAssets found: ' + asketchDocument.assets.colorAssets.length;
+      } else {
+        // For versions of Sketch 52 and lower
+        asketchDocument.assets.colors.forEach(color => addSharedColor(document, color));
+        colorsMsg = 'Shared colors found: ' + asketchDocument.assets.colors.length;
+      }
 
       console.log(colorsMsg);
       importAlertMsg += colorsMsg + '\n';
