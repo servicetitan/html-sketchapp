@@ -48,11 +48,15 @@ class Document {
 
   addColor(color, name) {
     this._colors.push(makeColorFromCSS(color));
-    this._colorAssets.push({
+    const colorAsset = {
       '_class': 'MSImmutableColorAsset',
-      'name': name,
       'color': makeColorFromCSS(color)
-    });
+    };
+
+    if (name !== undefined) {
+      colorAsset['name'] = name;
+    }
+    this._colorAssets.push(colorAsset);
   }
 
   toJSON() {
@@ -62,7 +66,7 @@ class Document {
       'assets': {
         '_class': 'assetCollection',
         'colors': this._colors,
-        'colorAssets':  this._colorAssets
+        'colorAssets': this._colorAssets
       },
       'currentPageIndex': 0,
       'enableLayerInteraction': true,
