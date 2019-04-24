@@ -133,3 +133,46 @@ export const RESIZING_CONSTRAINTS = {
   HEIGHT: 47,
   NONE: 63
 };
+
+// Warn if unsupported Sketch styling detected
+export const checkUnsupportedSketchStyles = (nodeStyles, nodeText) => {
+  // Checking all elements of array are equal
+  const isElementsEqual = arr => (arr.length > 0 ? arr.every(v => v === arr[0]) : false);
+  // Detecting transparent colors
+  const isColorTransparent = color =>
+    color === 'transparent' ||
+    (color.includes('rgba(') && (color.includes(',0)') || color.includes(', 0)')));
+
+  // Node has different borders on two or more sides
+  const borderSides = ['Top', 'Right', 'Bottom', 'Left'];
+  const bordersColors = borderSides.map(side => nodeStyles['border' + side + 'Color']);
+  const bordersStyles = borderSides.map(side => nodeStyles['border' + side + 'Style']);
+  const bordersWidths = borderSides.map(side => nodeStyles['border' + side + 'Width']);
+
+  const isBordersWidthZero = bordersWidths.reduce((sum, x) => sum + parseFloat(x), 0) === 0;
+  const invisibleStyles = new Set(['hidden', 'initial', 'none', 'unset']);
+  const isBorderStylesInvisible = bordersStyles.every(style => invisibleStyles.has(style));
+  const isBorderColorsTransparent = bordersColors.every(color => isColorTransparent(color));
+
+  if (!isBordersWidthZero && !isBorderStylesInvisible && !isBorderColorsTransparent) {
+    if (!isElementsEqual(bordersColors) || !isElementsEqual(bordersStyles) || !isElementsEqual(bordersWidths)) {
+      console.warn(`Unsupported Sketch feature! Different borders on element.innerText: "${nodeText}"`);
+    }
+  }
+
+  // Node has an outline property
+  const outlineStyle = nodeStyles['outlineStyle'];
+  const outlineWidth = nodeStyles['outlineWidth'];
+  const outlineColor = nodeStyles['outlineColor'];
+
+  if (parseFloat(outlineWidth) > 0 && !invisibleStyles.has(outlineStyle) && !isColorTransparent(outlineColor)) {
+    console.warn(`Unsupported Sketch feature! Outlined element.innerText: "${nodeText}"`);
+  }
+
+  // Node has a transform property
+  const transformStyle = nodeStyles['transform'];
+
+  if (!invisibleStyles.has(transformStyle)) {
+    console.warn(`Unsupported Sketch feature! Transform on element.innerText: "${nodeText}"`);
+  }
+};

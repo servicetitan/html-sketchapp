@@ -14,6 +14,7 @@ import {getGroupBCR} from './helpers/bcr';
 import {fixWhiteSpace} from './helpers/text';
 import {isNodeVisible, isTextVisible} from './helpers/visibility';
 import {applyConstraintsToText} from './helpers/symbolAttributes/constraints';
+import {checkUnsupportedSketchStyles} from './helpers/utils';
 
 const DEFAULT_VALUES = {
   backgroundColor: 'rgba(0, 0, 0, 0)',
@@ -106,6 +107,8 @@ export default function nodeToSketchLayers(node, options) {
     opacity,
     whiteSpace
   } = styles;
+
+  checkUnsupportedSketchStyles(styles, node.innerText);
 
   // skip SVG child nodes as they are already covered by `new SVG(…)`
   if (isSVGDescendant(node)) {
