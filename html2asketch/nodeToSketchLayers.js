@@ -108,7 +108,7 @@ export default function nodeToSketchLayers(node, options) {
     whiteSpace
   } = styles;
 
-  checkUnsupportedSketchStyles(styles, node.innerText);
+  checkUnsupportedSketchStyles(styles, node);
 
   // skip SVG child nodes as they are already covered by `new SVG(…)`
   if (isSVGDescendant(node)) {

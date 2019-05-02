@@ -135,13 +135,14 @@ export const RESIZING_CONSTRAINTS = {
 };
 
 // Warn if unsupported Sketch styling detected
-export const checkUnsupportedSketchStyles = (nodeStyles, nodeText) => {
+export const checkUnsupportedSketchStyles = (nodeStyles, node) => {
   // Checking all elements of array are equal
   const isElementsEqual = arr => (arr.length > 0 ? arr.every(v => v === arr[0]) : false);
   // Detecting transparent colors
   const isColorTransparent = color =>
     color === 'transparent' ||
     (color.includes('rgba(') && (color.includes(',0)') || color.includes(', 0)')));
+  const closestSymbolSlug = node.closest('[data-sketch-symbol-slug]').getAttribute('data-sketch-symbol-slug');
 
   // Node has different borders on two or more sides
   const borderSides = ['Top', 'Right', 'Bottom', 'Left'];
@@ -156,7 +157,7 @@ export const checkUnsupportedSketchStyles = (nodeStyles, nodeText) => {
 
   if (!isBordersWidthZero && !isBorderStylesInvisible && !isBorderColorsTransparent) {
     if (!isElementsEqual(bordersColors) || !isElementsEqual(bordersStyles) || !isElementsEqual(bordersWidths)) {
-      console.warn(`Unsupported Sketch feature! Different borders on element.innerText: "${nodeText}"`);
+      console.warn(`Unsupported Sketch feature! Different borders found in symbol.slug: "${closestSymbolSlug}"`);
     }
   }
 
@@ -166,13 +167,13 @@ export const checkUnsupportedSketchStyles = (nodeStyles, nodeText) => {
   const outlineColor = nodeStyles['outlineColor'];
 
   if (parseFloat(outlineWidth) > 0 && !invisibleStyles.has(outlineStyle) && !isColorTransparent(outlineColor)) {
-    console.warn(`Unsupported Sketch feature! Outlined element.innerText: "${nodeText}"`);
+    console.warn(`Unsupported Sketch feature! Outline found in symbol.slug: "${closestSymbolSlug}"`);
   }
 
   // Node has a transform property
   const transformStyle = nodeStyles['transform'];
 
   if (!invisibleStyles.has(transformStyle)) {
-    console.warn(`Unsupported Sketch feature! Transform on element.innerText: "${nodeText}"`);
+    console.warn(`Unsupported Sketch feature! Transform found in symbol.slug: "${closestSymbolSlug}"`);
   }
 };
