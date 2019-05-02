@@ -142,7 +142,15 @@ export const checkUnsupportedSketchStyles = (nodeStyles, node) => {
   const isColorTransparent = color =>
     color === 'transparent' ||
     (color.includes('rgba(') && (color.includes(',0)') || color.includes(', 0)')));
-  const closestSymbolSlug = node.closest('[data-sketch-symbol-slug]').getAttribute('data-sketch-symbol-slug');
+
+  const errorMessage = () => {
+    const closestSymbol = node.closest('[data-sketch-symbol-slug]');
+
+    if (closestSymbol !== null) {
+      return `"${closestSymbol.getAttribute('data-sketch-symbol-slug')}" (symbol.slug)`;
+    }
+    return `"${node.innerText}" (node.innerText)`;
+  };
 
   // Node has different borders on two or more sides
   const borderSides = ['Top', 'Right', 'Bottom', 'Left'];
@@ -157,7 +165,7 @@ export const checkUnsupportedSketchStyles = (nodeStyles, node) => {
 
   if (!isBordersWidthZero && !isBorderStylesInvisible && !isBorderColorsTransparent) {
     if (!isElementsEqual(bordersColors) || !isElementsEqual(bordersStyles) || !isElementsEqual(bordersWidths)) {
-      console.warn(`Unsupported Sketch feature! Different borders found in symbol.slug: "${closestSymbolSlug}"`);
+      console.warn(`Unsupported Sketch feature! Different borders found in: ${errorMessage()}`);
     }
   }
 
@@ -167,13 +175,13 @@ export const checkUnsupportedSketchStyles = (nodeStyles, node) => {
   const outlineColor = nodeStyles['outlineColor'];
 
   if (parseFloat(outlineWidth) > 0 && !invisibleStyles.has(outlineStyle) && !isColorTransparent(outlineColor)) {
-    console.warn(`Unsupported Sketch feature! Outline found in symbol.slug: "${closestSymbolSlug}"`);
+    console.warn(`Unsupported Sketch feature! Outline found in: ${errorMessage()}`);
   }
 
   // Node has a transform property
   const transformStyle = nodeStyles['transform'];
 
   if (!invisibleStyles.has(transformStyle)) {
-    console.warn(`Unsupported Sketch feature! Transform found in symbol.slug: "${closestSymbolSlug}"`);
+    console.warn(`Unsupported Sketch feature! Transform found in: ${errorMessage()}`);
   }
 };
