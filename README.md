@@ -1,86 +1,37 @@
-# html-sketchapp [![npm version](https://badgen.now.sh/npm/v/@servicetitan/html-sketchapp)](https://www.npmjs.com/package/@servicetitan/html-sketchapp) [![MIT license](https://badgen.now.sh/badge/license/MIT/blue)](https://github.com/brainly/html-sketchapp/blob/master/LICENSE.md) [![npm downloads](https://badgen.now.sh/npm/dm/@servicetitan/html-sketchapp)](https://www.npmjs.com/package/@servicetitan/html-sketchapp)
 
-HTML to Sketch export solution.
+# html-sketchapp [![npm version](https://badgen.now.sh/npm/v/@servicetitan/html-sketchapp)](https://www.npmjs.com/package/@servicetitan/html-sketchapp) [![npm downloads](https://badgen.now.sh/npm/dm/@servicetitan/html-sketchapp)](https://www.npmjs.com/package/@servicetitan/html-sketchapp)
 
-## What it can do?
+[HTML to Sketch export solution](https://github.com/brainly/html-sketchapp/) customized by Servicetitan's team.
 
-html-sketchapp turns HTML nodes into Sketch layers or symbols. Additionally, it allows to export shared text styles and document colors.
+### Changes list
+Added attributes that provide control over internal features of Sketch:
+1. `data-sketch-constraints` to set [resizing constrants](https://sketchapp.com/docs/layer-basics/constraints/) 
+2. `data-sketch-rotation="18"` to control layer's rotation, similar to CSS's instruction `transform: 'rotate(18deg)`
+(https://github.com/DWilliames/paddy-sketch-plugin))
+3. `data-sketch-textlabel="Placeholder"` to add a label on firstly met text layer
+4. `data-sketch-locked` to lock layer
+5. `data-sketch-ungroup` to ungroup node's layer
+6. `data-sketch-padding="10 16"` to add padding around layer (utilizing [Paddy plugin](https://github.com/DWilliames/paddy-sketch-plugin))
+7. `data-sketch-spacing="10 20"` to add some spacing between same level layers (utilizing  [Paddy plugin](https://github.com/DWilliames/paddy-sketch-plugin))
 
-## Why?
+Added ability to apply constraint to text objects.
+Added SVG rendering support.
+Added dashed borders support.
+Added support of updatable shared text styles.
+Added support for shared colors with names in Sketch (aka color presets).
 
-The motivation behind this project was ability to easily share Front-End style guide with our Design team. Although similar project, [react-sketchapp](https://github.com/airbnb/react-sketchapp), already exists it does require you to:
 
-- use React,
-- build everything using generic components (`<View>`, `<Text>`, `<Image>`),
-- and keep your styles in JS.
-
-We were unable to quickly work around these limitations, so we created html-sketchapp.
-
-## Limitations
-
-Comprehensive summary of what is, and what is not supported can be found [here](https://github.com/brainly/html-sketchapp/wiki/What's-supported%3F), but the TLDR is as follows:
-
-- pseudoelements are not supported (workaround used),
-- resizing information aka constraints is not generated (workaround used),
-- some CSS properties (e.g. overflow) are not supported or not fully supported,
-- not all types of images are supported (animated gifs, webp),
-- all fonts have to be locally installed.
-
-## How do I run it?
+### Fixes
+* Fix of shadowObj.spread miscalculation
+* Fix unexpected line wrapping of texts in Sketch for on half of a pixel rounding
+* Ability to manually set `_objectID` with `setObjectID()` on any object
+* Added console.log() message with imported objects count on importing asketch.json in Sketch (asketch2sketch plugin)
+* Added warning for unsupported Sketch styles (different borders, outlines, rotations)
 
 ### Install html-sketchapp
 
 You can get stable version of html-sketchapp from NPM.
 
 ```
-npm i @brainly/html-sketchapp
+npm i @servicetian/html-sketchapp
 ```
-
-### Build html-sketchapp
-
-```
-npm i # install dependencies
-npm run build # build the plugin
-```
-
-On Windows additional settings may be required (see [this thread](https://github.com/nodejs/node-gyp/issues/679):
-
-```
-npm install --global windows-build-tools
-```
-
-### Create .asketch files
-
-`html2asketch` is a library that you can use to create a script that extracts specific parts of your website and saves them as layers, shared text styles, document colors and symbols. Your script then can be run in a regular or a headless browser.
-
-There is no one right way of using `html2asketch`, but you can start by checking out the ["Usage Examples"](https://github.com/brainly/html-sketchapp/wiki/Usage-Examples) section of the wiki or the two example projects that we provide:
-
-- [html-sketchapp-example](https://github.com/brainly/html-sketchapp-example) - minimal script that takes an URL and produces a `page.asketch.json` file
-- [html-sketchapp-style-guide](https://github.com/brainly/html-sketchapp-style-guide) - script that takes parts of the Brainly style-guide and exports them as Sketch symbols, shared text styles and document colors. This script produces `document.asketch.json` and `page.asketch.json`.
-
-*If you are wondering what are, and why we need `.asketch` files, plese see our [wiki](https://github.com/brainly/html-sketchapp/wiki/How-does-it-work%3F).*
-
-### Import .asketch files to Sketch
-
-All `.asketch.json` files should be loaded to Sketch via the `./build/asketch2sketch.sketchplugin` plugin. You can download ready to use Sketch plugin from the ["Releases"](https://github.com/brainly/html-sketchapp/releases/latest) section.
-
-<img src="https://i.imgur.com/9eDm6NQ.png" width="450" alt="Installing Sketch plugin" title="Installing Sketch plugin" />
-
-You can download ready to use Sketch plugin from the ["Releases"](https://github.com/brainly/html-sketchapp/releases/latest) section, or build it yourself from the sources:
-
-```
-npm i # install dependencies
-npm run build # build the plugin
-```
-
-## Projects using html-sketchapp
-
-- [html-sketchapp-cli](https://github.com/seek-oss/html-sketchapp-cli) - "Quickly generate Sketch libraries from HTML documents and living style guides."
-- [story2sketch](https://github.com/chrisvxd/story2sketch) - "Convert Storybook stories into Sketch symbols."
-- [UIengine](https://github.com/dennisreimann/uiengine) - "Workbench for UI-driven development."
-- [Alva](https://github.com/meetalva/alva) - "Alva is a radically new design tool that enables cross-functional teams to design digital products"
-- [FAST-DNA](https://github.com/Microsoft/fast-dna) - "A set of tooling, resources, and components used to accelerate building Web sites and applications."
-
-## Standing on the shoulders of giants :heart:
-
-This project uses huge bits and pieces from the fantastic [react-sketchapp](https://github.com/airbnb/react-sketchapp) and wouldn't be possible without [skpm](https://github.com/skpm/skpm) and information from [Sketch-Headers](https://github.com/abynim/Sketch-Headers).
