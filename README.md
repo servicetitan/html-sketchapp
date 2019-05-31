@@ -30,7 +30,7 @@ Added support for shared colors with names in Sketch (aka color presets).
 
 ### Install html-sketchapp
 
-You can get stable version of html-sketchapp from NPM.
+You can get Servicetitan's version of html-sketchapp from NPM.
 
 ```
 npm i @servicetian/html-sketchapp
