@@ -4,8 +4,6 @@ export const constraints = node => node.getAttribute('data-sketch-constraints') 
 
 export default function applyConstraints(node, element) {
   if (constraints(node)) {
-    //console.log(`Constraints (${constraints}) @`, element);
-
     if (isGroup(element)) {
       element._resizingConstraint = constraints(node);
     }
