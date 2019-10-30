@@ -39,10 +39,15 @@ export default function nodeTreeToSketchGroup(node, options) {
   }
 
   if (isNodeUngroup(node)) {
-    // Processing of Symbol’s node...
-    if (node.parentNode.dataset.sketchSymbolName) {
-      //console.log('Ungrouping child node of Symbol:', node);
-      const symbolBcr = node.parentNode.getBoundingClientRect();
+    const parent = node.parentNode;
+    const isParentSymbol = parent.dataset.sketchSymbolName !== undefined;
+    const isParentUnwrapped =
+      parent.dataset.sketchSymbolDisableUnwrapping === undefined ||
+      parent.dataset.sketchUngroup !== undefined;
+
+    // Special ungrouping is required for Symbol’s children
+    if (isParentSymbol && isParentUnwrapped) {
+      const symbolBcr = parent.getBoundingClientRect();
 
       // Layer positions are relative to Symbol’s position
       layers.forEach(layer => {
