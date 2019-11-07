@@ -220,8 +220,8 @@
                     "constrainProportions": false,
                     "height": 17,
                     "width": 107,
-                    "x": 150.3125,
-                    "y": 70.4375
+                    "x": 149.3125,
+                    "y": 69.4375
                   },
                   "text": "Slotted content",
                   "automaticallyDrawOnUnderlyingPath": false,
@@ -250,7 +250,7 @@
               "frame": {
                 "_class": "rect",
                 "constrainProportions": false,
-                "height": 100.4375,
+                "height": 98.4375,
                 "width": 784,
                 "x": 0,
                 "y": 48.4375
@@ -426,8 +426,8 @@
                       "frame": {
                         "_class": "rect",
                         "constrainProportions": false,
-                        "height": 42,
-                        "width": 269,
+                        "height": 40,
+                        "width": 267,
                         "x": 0,
                         "y": 0
                       },
@@ -512,14 +512,14 @@
                         "isEnabled": true,
                         "color": {
                           "_class": "color",
-                          "red": 0.8666666666666667,
-                          "green": 0.8666666666666667,
-                          "blue": 0.8666666666666667,
+                          "red": 0.8470588235294118,
+                          "green": 0.8470588235294118,
+                          "blue": 0.8470588235294118,
                           "alpha": 1
                         },
                         "fillType": 0,
                         "position": 1,
-                        "thickness": 2
+                        "thickness": 1
                       }
                     ],
                     "shadows": [],
@@ -536,8 +536,8 @@
                   "frame": {
                     "_class": "rect",
                     "constrainProportions": false,
-                    "height": 42,
-                    "width": 269,
+                    "height": 40,
+                    "width": 267,
                     "x": 0,
                     "y": 0
                   },
@@ -581,8 +581,8 @@
                     "constrainProportions": false,
                     "height": 17,
                     "width": 138,
-                    "x": 12,
-                    "y": 12
+                    "x": 11,
+                    "y": 11
                   },
                   "text": "Shadow content ->",
                   "automaticallyDrawOnUnderlyingPath": false,
@@ -661,8 +661,8 @@
               "frame": {
                 "_class": "rect",
                 "constrainProportions": false,
-                "height": 42,
-                "width": 269,
+                "height": 40,
+                "width": 267,
                 "x": 0,
                 "y": 106.875
               },
@@ -690,7 +690,7 @@
           "frame": {
             "_class": "rect",
             "constrainProportions": false,
-            "height": 148.875,
+            "height": 146.875,
             "width": 784,
             "x": 8,
             "y": 19.90625
@@ -704,7 +704,7 @@
       "frame": {
         "_class": "rect",
         "constrainProportions": false,
-        "height": 148.875,
+        "height": 146.875,
         "width": 784,
         "x": 0,
         "y": 0
@@ -734,7 +734,7 @@
   "frame": {
     "_class": "rect",
     "constrainProportions": false,
-    "height": 148.875,
+    "height": 146.875,
     "width": 784,
     "x": 0,
     "y": 0
